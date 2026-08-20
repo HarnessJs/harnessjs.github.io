@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "check": "node scripts/check-docs.mjs",
+    "build": "npm run check && vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {

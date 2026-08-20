@@ -1,87 +1,56 @@
 ---
-layout: home
-
-hero:
-  name: ThenaJS
-  text: Agentes de IA em TypeScript
-  tagline: A lógica no .ts, o prompt no .md. O framework une os dois e cuida do resto.
-  image:
-    src: /assets/logo.png
-    alt: ThenaJS
-  actions:
-    - theme: brand
-      text: Começar
-      link: /comecar/o-que-e
-    - theme: alt
-      text: Seu primeiro agente
-      link: /comecar/primeiro-agente
-    - theme: alt
-      text: GitHub
-      link: https://github.com/thenajs/ThenaJS
-
-features:
-  - icon: 🧩
-    title: Um agente é uma classe
-    details: Decore com @Agent, aponte o prompt em markdown, e pronto. Sem boilerplate de mensagens, sem montar payload de API.
-    link: /comecar/primeiro-agente
-    linkText: Ver o exemplo
-
-  - icon: 🛠️
-    title: Tools sem if/else
-    details: Você descreve a ação com um schema Zod. Detectar que o modelo quer chamá-la, validar os argumentos e executar é trabalho do framework — nunca seu.
-    link: /guias/tools
-    linkText: Como funciona
-
-  - icon: 🔍
-    title: Nada de caixa-preta
-    details: Um report em HTML mostra a árvore da execução — o que foi enviado ao modelo, o que ele decidiu, quanto custou. E o Flow desenha tudo isso ao vivo, enquanto roda.
-    link: /guias/report
-    linkText: Ver o report
+layout: page
+title: ThenaJS
+titleTemplate: false
+aside: false
+editLink: false
+lastUpdated: false
+prev: false
+next: false
+head:
+  - - meta
+    - name: robots
+      content: noindex
+  - - link
+    - rel: alternate
+      hreflang: en
+      href: https://thenajs.github.io/en/
+  - - link
+    - rel: alternate
+      hreflang: pt
+      href: https://thenajs.github.io/pt/
+  - - link
+    - rel: alternate
+      hreflang: x-default
+      href: https://thenajs.github.io/en/
+  - - meta
+    - http-equiv: refresh
+      content: 0; url=/en/
 ---
 
-## Em trinta segundos
+<div style="max-width: 30rem; margin: 6rem auto; padding: 0 1.5rem; text-align: center">
 
-```bash
-npm install -g @thenajs/cli
-thena create meu-agente
-cd meu-agente && npm install && npm start
-```
+# ThenaJS
 
-E um agente é isto:
+Choose a language — escolha um idioma.
 
-```ts
-// src/agents/explorer/explorer.agent.ts
-import { Agent } from "@thenajs/core";
-import { ShellTool } from "@thenajs/tools";
-import { LocalOllamaProvider } from "../../providers/ollama.provider.js";
+<p>
+  <a href="/en/" style="font-weight:600">English</a>
+  &nbsp;·&nbsp;
+  <a href="/pt/" style="font-weight:600">Português</a>
+</p>
 
-@Agent({
-  provider: LocalOllamaProvider,
-  tools: [ShellTool],
-  prompt: "./explorer.agent.md", // o comportamento vive no markdown
+</div>
+
+<script setup>
+import { onMounted } from 'vue'
+
+// O `meta refresh` acima já resolve sem JavaScript — GitHub Pages não faz
+// redirecionamento no servidor. Isto só melhora o palpite: quem tem o navegador
+// em português cai no português, e não no inglês.
+onMounted(() => {
+  const pt = (navigator.languages ?? [navigator.language ?? ''])
+    .some((l) => l.toLowerCase().startsWith('pt'))
+  location.replace(pt ? '/pt/' : '/en/')
 })
-export class ExplorerAgent {}
-```
-
-```md
-<!-- src/agents/explorer/explorer.agent.md -->
-Você explora projetos de software.
-
-Use o shell para investigar antes de responder. Prefira comandos de leitura.
-```
-
-Nenhuma linha para tratar mensagens, chamar a API, detectar tool call ou validar
-argumentos. Isso é o que o framework faz — e a página
-[O que é automático](/como-funciona/automatico) lista exatamente o quê, para você
-não ficar adivinhando.
-
-## Por onde seguir
-
-| Se você quer… | Vá para |
-| --- | --- |
-| entender se serve para o seu caso | [O que é ThenaJS](/comecar/o-que-e) |
-| ver algo rodando em 10 minutos | [Seu primeiro agente](/comecar/primeiro-agente) |
-| saber o que acontece por baixo | [O que é automático](/como-funciona/automatico) |
-| resolver uma tarefa específica | [Guias](/guias/tools) |
-| consultar uma assinatura | [Referência](/referencia/agent) |
-| destravar de um erro | [Problemas comuns](/problemas-comuns) |
+</script>

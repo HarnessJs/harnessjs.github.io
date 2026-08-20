@@ -1,8 +1,13 @@
 name: Deploy docs
 
 # Constrói o VitePress e publica no GitHub Pages a cada push na main.
+#
+# Em pull request o mesmo `build` roda, mas o `deploy` não: é o que faz um link
+# quebrado ou uma página sem tradução aparecer na review, e não em produção.
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -26,14 +31,26 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Paridade EN/PT, links internos, vazamento de idioma e integridade da
+      # sidebar. Roda antes do build porque o VitePress não valida link
+      # absoluto — e é a forma que este site usa, já que o caminho precisa
+      # dizer o idioma.
+      - run: npm run check
       - run: npm run build
+      # O artefato do Pages só faz sentido no caminho que publica. Num PR de
+      # fork o token nem teria `pages: write`, e a etapa falharia por permissão
+      # depois de o build já ter passado.
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: .vitepress/dist
 
   deploy:
     needs: build
+    # Publicar é só para a main; o PR para no `build`.
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
