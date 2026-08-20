@@ -14,7 +14,7 @@ A ideia central é separar duas coisas que costumam se misturar:
 ```ts
 @Agent({
   provider: LocalOllamaProvider,
-  tools: [ShellTool],
+  tools: [ReadFileTool],
   prompt: "./explorer.agent.md",
 })
 export class ExplorerAgent {}

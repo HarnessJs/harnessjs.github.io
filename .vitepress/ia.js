@@ -113,6 +113,10 @@ export const IA = [
     title: { en: "Techniques", pt: "Técnicas" },
     pages: [
       { slug: "tool-design", title: { en: "Tool design", pt: "Projetar tools" } },
+      {
+        slug: "tool-recipes",
+        title: { en: "Tool recipes", pt: "Receitas de tools" },
+      },
       { slug: "loops", title: { en: "Loops", pt: "Laços" } },
       {
         slug: "parallel-execution",

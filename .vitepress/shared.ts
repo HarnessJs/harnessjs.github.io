@@ -88,7 +88,6 @@ export const npmMenu: DefaultTheme.NavItemWithChildren = {
   text: "npm",
   items: [
     { text: "@thenajs/core", link: "https://www.npmjs.com/package/@thenajs/core" },
-    { text: "@thenajs/tools", link: "https://www.npmjs.com/package/@thenajs/tools" },
     {
       text: "@thenajs/qdrant-client",
       link: "https://www.npmjs.com/package/@thenajs/qdrant-client",

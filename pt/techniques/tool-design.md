@@ -124,8 +124,8 @@ Detalhe estruturado pertence aqui, e não serializado na observação.
 
 O array `tools` é a fronteira de segurança — o agente faz exatamente o que está
 nele, e nada além. Um agente que lê conteúdo não confiável e segura uma tool com
-efeito colateral é superfície de ataque. O `@thenajs/tools` traz uma `ShellTool`,
-e ela vem com aviso por esse motivo.
+efeito colateral é superfície de ataque. Uma tool de shell é o exemplo mais claro
+— veja o aviso dela em [Receitas de tools](/pt/techniques/tool-recipes).
 
 Prefira uma tool estreita a uma genérica: `reiniciar_servico(nome)` com um enum
 de serviços conhecidos é melhor que `rodar_shell(comando)`.

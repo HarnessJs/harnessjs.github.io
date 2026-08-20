@@ -122,8 +122,8 @@ Structured detail belongs here rather than serialised into the observation.
 
 The `tools` array is the security boundary — the agent can do exactly what is in
 it and nothing else. An agent that reads untrusted content and holds a tool with
-side effects is an attack surface. `@thenajs/tools` ships a `ShellTool`, and it
-carries a warning for that reason.
+side effects is an attack surface. A shell tool is the clearest example — see the
+warning on it in [Tool recipes](/en/techniques/tool-recipes).
 
 Prefer a narrow tool over a general one: `restart_service(name)` with an enum of
 known services beats `run_shell(command)`.

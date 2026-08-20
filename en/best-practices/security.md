@@ -27,7 +27,7 @@ every mechanism below applies.
 
 | Principle | The mechanism ThenaJS gives you |
 | --- | --- |
-| **Least privilege** | the `tools` array is per agent; `shellTool({ allow })`; a narrow tool instead of a general one |
+| **Least privilege** | the `tools` array is per agent; a narrow tool instead of a general one; an allowlist on anything shell-shaped |
 | **Human confirmation for high-impact actions** | a tool middleware reading `ctx.data`, which the model cannot set |
 | **Validate before and after the model** | Zod schemas, `beforePrompt`, `afterTool`, `afterResponse`, tool/chat middleware |
 | **Limit the blast radius** | `budget`, `maxIterations`, `maxFails`, `signal`, `FatalToolError` |
@@ -61,22 +61,31 @@ sees that content:
 Prefer a narrow tool over a general one. `restart_service(name)` with an enum of
 known services cannot be turned into anything else; `run_shell(command)` can.
 
-### `ShellTool` vs `shellTool({ allow })`
+### A shell tool is the sharpest case
+
+There is no bundled shell tool — ThenaJS ships no tool package, and
+[Tool recipes](/en/techniques/tool-recipes) has one to copy along with its
+warning. Copying it means the decision is yours, which is the point.
+
+If you use one, and the agent can see untrusted content, restrict it to an
+allowlist of first tokens:
 
 ```ts
-import { ShellTool, shellTool } from "@thenajs/tools";
-
-tools: [ShellTool];                            // no allowlist — any command
-tools: [shellTool({ allow: ["git", "ls"] })];  // first token must be allowed
+const ALLOWED = new Set(["git", "ls", "cat", "grep"]);
+const program = command.trim().split(/\s+/)[0] ?? "";
+if (!ALLOWED.has(program)) return { content: "not allowed", isError: true };
+if (/[;&|`$><]/.test(command)) return { content: "no chaining", isError: true };
 ```
 
-::: warning The allowlist checks the first token only
-It deliberately does not parse the shell line. A partial parser gives false
-confidence, and `;`, `&&`, `$(…)` and pipes would walk around anything cleverer.
+**The second check is what makes the first one mean anything.** Without it,
+`git status; rm -rf /` starts with `git` and passes the list. Refusing the whole
+line on a shell metacharacter is cruder than parsing it and stronger — a partial
+shell parser gives false confidence.
 
-`allow: ["git"]` permits `git status` — and also `git status; rm -rf /`. It
-reduces accidents; it is **not** a sandbox. Real isolation is a container or a
-restricted user.
+::: warning It is still not a sandbox
+What this bounds is *which programs* run, not what a permitted one can do. `cat`
+reads any file the process can read; `git` can push. For untrusted input the
+boundary is a container or a restricted user, not a regex.
 :::
 
 ## 2. Human confirmation for high-impact actions
@@ -255,7 +264,7 @@ that on the network.
 - [ ] the agent that reads untrusted content holds no side-effecting tool
 - [ ] high-impact tools are gated by a **middleware** reading `ctx.data`
 - [ ] schemas use `enum`, `min`/`max` and specific types, not bare `string`
-- [ ] `ShellTool` is absent, allowlisted, or in a disposable container
+- [ ] any shell tool is absent, allowlisted, or in a disposable container
 - [ ] secrets travel in `run({ data })`, never `memory` or the prompt
 - [ ] `budget` on every run a user can trigger
 - [ ] `report` off by default in production; `content: false` for personal data

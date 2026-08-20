@@ -77,8 +77,9 @@ limitação a contornar — é a fronteira de segurança. Um agente que lê cont
 confiável e segura uma tool com efeito colateral é superfície de ataque; veja o
 [SECURITY.md](https://github.com/thenajs/ThenaJS/blob/main/SECURITY.md).
 
-O `@thenajs/tools` traz uma `ShellTool`, e ela vem com um aviso exatamente por
-isso.
+O ThenaJS não publica pacote de tools — uma tool é pequena o bastante para ser
+sua. Prontas para copiar, incluindo uma de shell e o aviso dela, estão em
+[Receitas de tools](/pt/techniques/tool-recipes).
 
 ## Quando a tool falha
 

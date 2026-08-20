@@ -87,7 +87,7 @@ Você deve ver o agente responder no terminal. Se algo falhar aqui,
 Se preferir instalar num projeto que já existe, em vez de usar o CLI:
 
 ```bash
-npm install @thenajs/core @thenajs/tools zod
+npm install @thenajs/core zod
 ```
 
 Os outros pacotes são opcionais: `@thenajs/qdrant-client` para memória vetorial,

@@ -89,7 +89,7 @@ If you would rather install into a project you already have, instead of using th
 CLI:
 
 ```bash
-npm install @thenajs/core @thenajs/tools zod
+npm install @thenajs/core zod
 ```
 
 The other packages are optional: `@thenajs/qdrant-client` for vector memory,

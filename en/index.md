@@ -52,12 +52,12 @@ An agent is this:
 ```ts
 // src/agents/explorer/explorer.agent.ts
 import { Agent } from "@thenajs/core";
-import { ShellTool } from "@thenajs/tools";
+import { ReadFileTool } from "../../tools/read-file.tool";
 import { LocalOllamaProvider } from "../../providers/ollama.provider";
 
 @Agent({
   provider: LocalOllamaProvider,
-  tools: [ShellTool],
+  tools: [ReadFileTool],
   prompt: "./explorer.agent.md", // the behaviour lives in the markdown
 })
 export class ExplorerAgent {}
@@ -68,7 +68,7 @@ export class ExplorerAgent {}
 
 You explore software projects.
 
-Use the shell to investigate before answering. Prefer read-only commands.
+Read the relevant files before answering. Prefer reading over guessing.
 ```
 
 Not one line to handle messages, call the API, detect a tool call or validate

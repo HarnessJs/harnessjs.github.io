@@ -77,8 +77,9 @@ is not a limitation to work around — it is the security boundary. An agent tha
 reads untrusted content and holds a tool with side effects is an attack surface;
 see [SECURITY.md](https://github.com/thenajs/ThenaJS/blob/main/SECURITY.md).
 
-`@thenajs/tools` ships a `ShellTool`, and it comes with a warning for exactly
-this reason.
+ThenaJS ships no tool package — a tool is small enough that you own it. Ready-made
+ones to copy, including a shell tool and its warning, are in
+[Tool recipes](/en/techniques/tool-recipes).
 
 ## When a tool fails
 
