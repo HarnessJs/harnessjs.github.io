@@ -22,7 +22,7 @@ export class MemoriaDoProjeto extends QdrantStore {
 
 ```ts
 // src/config.ts
-export const config: ThenaConfig = { memory: [MemoriaDoProjeto] };
+export const config: ThenaConfig = { stores: [MemoriaDoProjeto] };
 ```
 
 A classe — não uma instância — é registrada, e instanciada **uma vez** para o app
@@ -167,7 +167,7 @@ Sem `embedModel`, o Ollama usa o modelo do chat — e a maioria dos modelos de c
 Este store já foi preparado com 768 dimensões, mas agora recebeu embeddings de 1536.
 ```
 Dois agentes com modelos de embedding diferentes precisam de dois stores:
-`memory: [QdrantNomic, QdrantOpenAI]`, injetados por nome com
+`stores: [QdrantNomic, QdrantOpenAI]`, injetados por nome com
 `@memory(QdrantOpenAI)`.
 :::
 

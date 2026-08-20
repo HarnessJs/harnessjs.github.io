@@ -1,15 +1,18 @@
 # Memory
 
-"Memory" means two different things in ThenaJS, and keeping them apart saves a
-lot of confusion.
+An agent has two memories, and the split is the familiar one: **working memory**
+for this run, and **long-term memory** that outlives it.
 
-| | Where it lives | Does the model read it? |
+| | Lives | The model reads |
 | --- | --- | --- |
-| **Run memory** — `run({ memory })` | in the run's state, serialised into the `system` message | **yes**, every turn |
-| **Vector memory** — `VectorMemory` | in a vector database, outside the run | only what you `recall` and put in the prompt |
+| **Working** — `run({ memory })` | in the run's state, as a `system` message | every turn, all of it |
+| **Long-term** — `VectorMemory`, via `@memory()` | in a vector database | only what you `recall` and put in the prompt |
 
 Neither is automatic in the sense that matters: nothing is retrieved and injected
 on your behalf.
+
+The databases behind long-term memory are configured as `ThenaConfig.stores` —
+that field holds *stores*, not memories, which is why it is not called `memory`.
 
 ## Run memory
 
@@ -54,7 +57,7 @@ export class ProjectMemory extends QdrantStore {
   }
 }
 
-export const config: ThenaConfig = { memory: [ProjectMemory] };
+export const config: ThenaConfig = { stores: [ProjectMemory] };
 ```
 
 Each class is instantiated **once** and shared by every agent — one connection
@@ -112,7 +115,7 @@ searches everything.
 ### Several stores
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 Multiple stores make sense when they are mutually incompatible — typically

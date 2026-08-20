@@ -100,7 +100,7 @@ export class MemoriaDoProjeto extends QdrantStore {
 Registre a classe — não uma instância — no config:
 
 ```ts
-export const config: ThenaConfig = { memory: [MemoriaDoProjeto] };
+export const config: ThenaConfig = { stores: [MemoriaDoProjeto] };
 ```
 
 Instanciada **uma vez** e compartilhada por todos os agentes.
@@ -150,7 +150,7 @@ Uma collection guarda um tamanho de embedding só. Dois agentes com modelos de
 embedding diferentes precisam de dois stores:
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 A injeção por esse array é posicional; o `@memory(QdrantOpenAI)` nomeia em vez

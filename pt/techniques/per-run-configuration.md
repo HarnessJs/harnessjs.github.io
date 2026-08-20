@@ -22,7 +22,7 @@ await app.run({ input, log: "verbose" }); // esta é barulhenta
 | `memory` | contexto durável que o modelo lê |
 | `data` | o seu canal, que o modelo nunca vê |
 
-O `memory` do `ThenaConfig` é outra coisa — as classes de banco vetorial — e não é
+O `stores` do `ThenaConfig` é outra coisa — as classes de banco vetorial — e não é
 por execução.
 
 ## Depurando uma requisição em produção

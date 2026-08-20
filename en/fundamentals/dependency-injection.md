@@ -51,7 +51,7 @@ export class MyAgent {
 ```
 
 `@memory(Store)` identifies the memory by the store's class, which removes the
-dependency on the order of `ThenaConfig.memory`. With no argument it delivers the
+dependency on the order of `ThenaConfig.stores`. With no argument it delivers the
 first registered one.
 
 Without the decorator the positional contract applies: memories arrive in the
@@ -127,7 +127,7 @@ parameter index:
         Add `state: MyClass` to @Workflow.
 
 [thena] @memory(QdrantOpenAI) in MyAgent: that store is not registered in
-        ThenaConfig.memory.
+        ThenaConfig.stores.
 ```
 
 ## Related

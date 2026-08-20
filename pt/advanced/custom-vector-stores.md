@@ -139,7 +139,7 @@ export class MemoriaDoProjeto extends MeuStore {
   }
 }
 
-export const config: ThenaConfig = { memory: [MemoriaDoProjeto] };
+export const config: ThenaConfig = { stores: [MemoriaDoProjeto] };
 ```
 
 Instanciado uma vez e compartilhado por todos os agentes: uma conexão, um

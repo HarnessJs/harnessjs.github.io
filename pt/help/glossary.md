@@ -22,7 +22,8 @@ alternam entre duas palavras para a mesma coisa.
 | --- | --- | --- |
 | **Contexto** (`ctx`) | O objeto que atravessa todos os passos de uma execução. Carrega `state`, `output`, `turn`, `data`, `signal` e os controles da execução. | Context |
 | **Estado** | A classe declarada em `@Workflow({ state })`, instanciada uma vez por execução e injetada com `@state()`. | State |
-| **Memória** | Duas coisas diferentes, mantidas distintas: o `run({ memory })`, contexto durável serializado na mensagem `system`; e a **memória vetorial**, busca semântica através de um `VectorStore`. | Memory |
+| **Memória** | A memória de trabalho do agente: o `run({ memory })`, lido pelo modelo em todo turno desta execução, e que acaba com ela. | Memory |
+| **Memória vetorial** | Memória de longo prazo: a `VectorMemory`, injetada pelo `@memory()`, buscada por similaridade e que sobrevive à execução. Os bancos por trás dela são o `ThenaConfig.stores`. | Vector memory |
 | **Data** | O `run({ data })`. O canal de dados da execução. Nunca vai para o modelo, nunca chega ao report. | Data |
 | **Orçamento** | O teto da execução inteira — tempo, chamadas, tokens, custo. | Budget |
 | **Hook** | Um método opcional na classe do agente (`beforePrompt`, `beforeTool`, `afterTool`, `afterResponse`, `onError`). | Hook |

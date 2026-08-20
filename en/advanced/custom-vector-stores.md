@@ -141,7 +141,7 @@ export class ProjectMemory extends MyStore {
   }
 }
 
-export const config: ThenaConfig = { memory: [ProjectMemory] };
+export const config: ThenaConfig = { stores: [ProjectMemory] };
 ```
 
 Instantiated once and shared by every agent: one connection, one

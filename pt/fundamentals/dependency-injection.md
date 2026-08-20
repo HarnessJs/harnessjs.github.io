@@ -51,7 +51,7 @@ export class MeuAgente {
 ```
 
 `@memory(Store)` identifica a memória pela classe do store, o que dispensa
-depender da ordem de `ThenaConfig.memory`. Sem argumento, entrega a primeira
+depender da ordem de `ThenaConfig.stores`. Sem argumento, entrega a primeira
 registrada.
 
 Sem o decorator vale o contrato posicional: as memórias chegam na ordem em que os
@@ -126,7 +126,7 @@ do parâmetro:
         Acrescente `state: MinhaClasse` no @Workflow.
 
 [thena] @memory(QdrantOpenAI) em MeuAgente: esse store não está registrado em
-        ThenaConfig.memory.
+        ThenaConfig.stores.
 ```
 
 ## Relacionado

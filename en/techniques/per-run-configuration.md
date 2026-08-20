@@ -22,7 +22,7 @@ await app.run({ input, log: "verbose" }); // this one is loud
 | `memory` | durable context the model reads |
 | `data` | your channel, which the model never sees |
 
-`memory` in `ThenaConfig` is a different thing — the vector store classes — and
+`stores` in `ThenaConfig` is a different thing — the vector store classes — and
 is not per-run.
 
 ## Debugging one request in production

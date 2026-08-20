@@ -50,7 +50,7 @@ export class MyAgent {
 ```
 
 `@memory(Store)` identifies the memory by the store's class, removing the
-dependency on the order of `ThenaConfig.memory`. With no argument it delivers the
+dependency on the order of `ThenaConfig.stores`. With no argument it delivers the
 first registered one.
 
 Without the decorator the positional contract applies — which is why reordering
@@ -117,7 +117,7 @@ A one-parameter `until` (`untilAnswered`, or `(ctx) => …`) never triggers it.
         Add `state: MyClass` to @Workflow.
 
 [thena] @memory(QdrantOpenAI) in MyAgent: that store is not registered in
-        ThenaConfig.memory.
+        ThenaConfig.stores.
 ```
 
 ## Related

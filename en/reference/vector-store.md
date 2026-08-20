@@ -99,7 +99,7 @@ export class ProjectMemory extends QdrantStore {
 Register the class — not an instance — in the config:
 
 ```ts
-export const config: ThenaConfig = { memory: [ProjectMemory] };
+export const config: ThenaConfig = { stores: [ProjectMemory] };
 ```
 
 Instantiated **once** and shared by every agent.
@@ -149,7 +149,7 @@ One collection holds one embedding size. Two agents with different embedding
 models need two stores:
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 Injection from that array is positional; `@memory(QdrantOpenAI)` names it

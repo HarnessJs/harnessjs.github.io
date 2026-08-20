@@ -102,11 +102,11 @@ Dois agentes com modelos de embedding diferentes apontando para o mesmo store. U
 collection guarda um tamanho só — cada modelo precisa do seu:
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 E o agente de 1536 pega o segundo parâmetro do construtor. A injeção pelo
-`ThenaConfig.memory` é **posicional**, então reordenar aquele array troca
+`ThenaConfig.stores` é **posicional**, então reordenar aquele array troca
 silenciosamente qual store cada agente usa. Use `@memory(QdrantOpenAI)` para
 nomear em vez de depender da ordem.
 

@@ -8,7 +8,7 @@ import type { ThenaConfig } from "@thenajs/core";
 export const config: ThenaConfig = {
   log: true,
   report: true,
-  memory: [MeuQdrant],
+  stores: [MeuQdrant],
   redact: true,
 };
 
@@ -19,7 +19,7 @@ const app = Thena.create(MeuWorkflow, config);
 | --- | --- | --- |
 | `log` | `boolean \| "verbose" \| (e: ExecutionEvent) => void` | desligado |
 | `report` | `boolean \| ReportOptions` | desligado |
-| `memory` | `VectorStoreCtor[]` | — |
+| `stores` | `VectorStoreCtor[]` | — |
 | `redact` | `RedactConfig` | **ligado** |
 
 ## `log`
@@ -60,10 +60,10 @@ pelo `redact`, mas não existe regex para nome ou endereço.
 Cada execução grava `<dir>/<runId>/index.html` e `<dir>/<runId>/report.json`. O
 `<dir>/index.html` é um índice de todas as execuções.
 
-## `memory`
+## `stores`
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 **Classes** de banco vetorial. Cada uma é instanciada **uma vez** e compartilhada

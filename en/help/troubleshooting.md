@@ -104,11 +104,11 @@ Two agents with different embedding models pointing at the same store. One
 collection holds one size — each model needs its own:
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 The 1536 agent takes the second constructor parameter. Injection from
-`ThenaConfig.memory` is **positional**, so reordering that array silently changes
+`ThenaConfig.stores` is **positional**, so reordering that array silently changes
 which store each agent gets. Use `@memory(QdrantOpenAI)` to name it instead of
 depending on the order.
 

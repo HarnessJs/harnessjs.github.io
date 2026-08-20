@@ -22,7 +22,8 @@ alternate between two words for the same thing.
 | --- | --- | --- |
 | **Context** (`ctx`) | The object that crosses every step of a run. Carries `state`, `output`, `turn`, `data`, `signal` and the run controls. | Contexto |
 | **State** | The class declared in `@Workflow({ state })`, instantiated once per run and injected with `@state()`. | Estado |
-| **Memory** | Two different things, kept distinct: `run({ memory })`, durable context serialised into the `system` message; and **vector memory**, semantic search through a `VectorStore`. | Memória |
+| **Memory** | The agent's working memory: `run({ memory })`, read by the model in every turn of this run, gone when it ends. | Memória |
+| **Vector memory** | Long-term memory: `VectorMemory`, injected by `@memory()`, searched by similarity and outliving the run. The databases behind it are `ThenaConfig.stores`. | Memória vetorial |
 | **Data** | `run({ data })`. The run's own data channel. Never goes to the model, never reaches the report. | Data |
 | **Budget** | A ceiling for the whole run — time, calls, tokens, cost. | Orçamento |
 | **Hook** | An optional method on the agent class (`beforePrompt`, `beforeTool`, `afterTool`, `afterResponse`, `onError`). | Hook |

@@ -1,15 +1,19 @@
 # Memória
 
-"Memória" significa duas coisas diferentes no ThenaJS, e mantê-las separadas
-poupa muita confusão.
+Um agente tem duas memórias, e a divisão é a conhecida: **memória de trabalho**
+para esta execução, e **memória de longo prazo** que sobrevive a ela.
 
-| | Onde mora | O modelo lê? |
+| | Mora | O modelo lê |
 | --- | --- | --- |
-| **Memória da execução** — `run({ memory })` | no estado da execução, serializada na mensagem `system` | **sim**, a cada turno |
-| **Memória vetorial** — `VectorMemory` | num banco vetorial, fora da execução | só o que você `recall` e põe no prompt |
+| **De trabalho** — `run({ memory })` | no estado da execução, como mensagem `system` | a cada turno, inteira |
+| **De longo prazo** — `VectorMemory`, via `@memory()` | num banco vetorial | só o que você `recall` e põe no prompt |
 
 Nenhuma das duas é automática no sentido que importa: nada é recuperado e
 injetado por você.
+
+Os bancos por trás da memória de longo prazo são configurados em
+`ThenaConfig.stores` — aquele campo guarda *stores*, e não memórias, que é por
+que ele não se chama `memory`.
 
 ## Memória da execução
 
@@ -52,7 +56,7 @@ export class MemoriaDoProjeto extends QdrantStore {
   }
 }
 
-export const config: ThenaConfig = { memory: [MemoriaDoProjeto] };
+export const config: ThenaConfig = { stores: [MemoriaDoProjeto] };
 ```
 
 Cada classe é instanciada **uma vez** e compartilhada por todos os agentes — uma
@@ -108,7 +112,7 @@ O bug mais comum: `remember` sem `dataset` grava em `"default"`, e
 ### Vários stores
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 Vários stores fazem sentido quando eles são incompatíveis entre si —

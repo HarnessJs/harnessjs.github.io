@@ -31,7 +31,7 @@ const app = Thena.create(MyWorkflow, config);
 | --- | --- |
 | `log` | `true` for an indented console tree, `"verbose"` to include the content, or a `(event) => void` function as your own sink |
 | `report` | `true` for the defaults, or `{ dir, format, content }` |
-| `memory` | vector store classes, instantiated once and shared by every agent |
+| `stores` | vector store classes, instantiated once and shared by every agent |
 | `redact` | secret masking on captured content — **on by default** |
 
 ### `log`

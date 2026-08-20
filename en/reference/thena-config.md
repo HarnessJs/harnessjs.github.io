@@ -8,7 +8,7 @@ import type { ThenaConfig } from "@thenajs/core";
 export const config: ThenaConfig = {
   log: true,
   report: true,
-  memory: [MyQdrant],
+  stores: [MyQdrant],
   redact: true,
 };
 
@@ -19,7 +19,7 @@ const app = Thena.create(MyWorkflow, config);
 | --- | --- | --- |
 | `log` | `boolean \| "verbose" \| (e: ExecutionEvent) => void` | off |
 | `report` | `boolean \| ReportOptions` | off |
-| `memory` | `VectorStoreCtor[]` | — |
+| `stores` | `VectorStoreCtor[]` | — |
 | `redact` | `RedactConfig` | **on** |
 
 ## `log`
@@ -60,10 +60,10 @@ masked by `redact`, but there is no regex for a name or an address.
 Each run writes `<dir>/<runId>/index.html` and `<dir>/<runId>/report.json`.
 `<dir>/index.html` is an index of every run.
 
-## `memory`
+## `stores`
 
 ```ts
-memory: [QdrantNomic, QdrantOpenAI];
+stores: [QdrantNomic, QdrantOpenAI];
 ```
 
 Vector store **classes**. Each is instantiated **once** and shared by every

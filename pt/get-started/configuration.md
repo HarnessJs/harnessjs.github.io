@@ -33,7 +33,7 @@ const app = Thena.create(MeuWorkflow, config);
 | --- | --- |
 | `log` | `true` para a árvore indentada no console, `"verbose"` para incluir o conteúdo, ou uma função `(event) => void` como sink próprio |
 | `report` | `true` para os defaults, ou `{ dir, format, content }` |
-| `memory` | classes de banco vetorial, instanciadas uma vez e compartilhadas por todos os agentes |
+| `stores` | classes de banco vetorial, instanciadas uma vez e compartilhadas por todos os agentes |
 | `redact` | mascaramento de segredo no conteúdo capturado — **vem ligado** |
 
 ### `log`

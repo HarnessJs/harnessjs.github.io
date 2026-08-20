@@ -22,7 +22,7 @@ export class ProjectMemory extends QdrantStore {
 
 ```ts
 // src/config.ts
-export const config: ThenaConfig = { memory: [ProjectMemory] };
+export const config: ThenaConfig = { stores: [ProjectMemory] };
 ```
 
 The class — not an instance — is registered, and instantiated **once** for the
@@ -165,7 +165,7 @@ at embeddings.
 This store was prepared with 768 dimensions, but received embeddings of 1536.
 ```
 Two agents with different embedding models need two stores:
-`memory: [QdrantNomic, QdrantOpenAI]`, injected by name with
+`stores: [QdrantNomic, QdrantOpenAI]`, injected by name with
 `@memory(QdrantOpenAI)`.
 :::
 
