@@ -39,29 +39,26 @@ early warning that the task has outgrown the model.
 service. Forward events instead:
 
 ```ts
-export function otelPlugin(): ThenaPlugin {
-  const spans = new Map<string, Span>();
-
-  return {
-    name: "otel",
-    onEvent(event) {
-      if (event.phase === "start") {
-        const parent = event.parentId ? spans.get(event.parentId) : undefined;
-        spans.set(event.id, tracer.startSpan(`${event.kind}:${event.name}`, { parent }));
-        return;
-      }
-      const span = spans.get(event.id);
-      if (!span) return;
-      if (event.status === "error") span.recordException(event.error ?? "");
-      span.end();
-      spans.delete(event.id);
-    },
-  };
-}
+export const metrics: ThenaPlugin = {
+  name: "metrics",
+  onEvent(event) {
+    if (event.phase !== "end") return;
+    statsd.timing(`agent.${event.kind}`, event.durationMs!);
+  },
+};
 ```
 
-`id`/`parentId` rebuild the tree; `runId` keeps concurrent runs apart. Deleting on
-`end` is not optional — a long-lived process that never cleans that map leaks.
+```ts
+await app.use(metrics);
+```
+
+That is the whole interface. Every field you need is on the event: `kind`,
+`name`, `durationMs`, `status`, `runId`.
+
+For distributed tracing, `id` and `parentId` are what let you nest spans — open
+one on `phase: "start"`, close it on `"end"`. Keep whatever you use to hold the
+open spans keyed by `event.id`, and remove each one when it closes; a long-lived
+process that never cleans that up leaks.
 
 Use `onEvent` rather than `tool`/`chat` middleware for observation: an exception
 in `onEvent` is swallowed and cannot break a run. That guarantee is worth a lot

@@ -38,26 +38,26 @@ An agent class with a `run(input, ctx)` method takes over the step entirely — 
 model call, no hooks. That makes workflow structure testable:
 
 ```ts
-export class StubReviewer {
+const rounds: number[] = [];
+
+class StubReviewer {
   constructor(@state() private readonly s: ReviewState) {}
   async run() {
-    this.s.rounds++;
-    this.s.approved = this.s.rounds >= 3;
-    return "APPROVED";
+    this.s.approved = ++this.s.rounds >= 3;
+    rounds.push(this.s.rounds);
+    return "reviewed";
   }
 }
 
 @Workflow({
   state: ReviewState,
-  steps: [loop({ steps: [StubReviewer], until: (_c, s: ReviewState) => s.approved,
-                 maxIterations: 5 })],
+  steps: [loop({ steps: [StubReviewer], until: (_c, s: ReviewState) => s.approved })],
 })
-export class TestWorkflow {}
+class TestWorkflow {}
 
 test("stops as soon as it is approved", async () => {
-  const app = Thena.create(TestWorkflow);
-  await app.run({ input: { message: "go" } });
-  await app.dispose();
+  await Thena.create(TestWorkflow).run({ input: { message: "go" } });
+  expect(rounds).toEqual([1, 2, 3]); // stopped on its own, not at the ceiling
 });
 ```
 
@@ -66,31 +66,30 @@ without a model.
 
 ## 3. The model layer, faked
 
-A `chat` middleware replaces the provider call entirely, which lets you script a
-whole conversation:
+A `chat` middleware replaces the provider call entirely:
 
 ```ts
-function scriptedModel(responses: RawAssistant[]) {
-  let i = 0;
-  return {
-    name: "scripted",
-    chat: async () => responses[i++] ?? { content: "done", toolCalls: [] },
-  };
-}
-
-test("recovers from a tool error", async () => {
-  const app = Thena.create(ExplorerWorkflow, config);
-  await app.use(
-    scriptedModel([
-      { content: "", toolCalls: [{ name: "read_file", arguments: { path: "nope" } }] },
-      { content: "", toolCalls: [{ name: "read_file", arguments: { path: "README.md" } }] },
-      { content: "It is a framework.", toolCalls: [] },
-    ]),
-  );
-
-  expect(await app.run({ input: { message: "what is this?" } })).toContain("framework");
-  await app.dispose();
+await app.use({
+  name: "fake-model",
+  chat: async () => ({ content: "APPROVED", toolCalls: [] }),
 });
+```
+
+That is enough for most tests: the agent runs, the tools run, the loop runs, and
+nothing touches the network.
+
+When you need the model to say something *different* on each turn — to test that
+the agent recovers from a tool error, say — return the answers in order:
+
+```ts
+const answers = [
+  { content: "", toolCalls: [{ name: "read_file", arguments: { path: "nope" } }] },
+  { content: "", toolCalls: [{ name: "read_file", arguments: { path: "README.md" } }] },
+  { content: "It is a framework.", toolCalls: [] },
+];
+
+let turn = 0;
+await app.use({ name: "scripted", chat: async () => answers[turn++] });
 ```
 
 No network, deterministic, fast — and it tests the loop, the tool, the error

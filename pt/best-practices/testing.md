@@ -38,26 +38,26 @@ Uma classe de agente com método `run(input, ctx)` assume o passo inteiro — se
 chamada ao modelo, sem hooks. Isso torna a estrutura do workflow testável:
 
 ```ts
-export class StubRevisor {
+const rodadas: number[] = [];
+
+class StubRevisor {
   constructor(@state() private readonly s: RevisaoState) {}
   async run() {
-    this.s.rodadas++;
-    this.s.aprovado = this.s.rodadas >= 3;
-    return "APROVADO";
+    this.s.aprovado = ++this.s.rodadas >= 3;
+    rodadas.push(this.s.rodadas);
+    return "revisado";
   }
 }
 
 @Workflow({
   state: RevisaoState,
-  steps: [loop({ steps: [StubRevisor], until: (_c, s: RevisaoState) => s.aprovado,
-                 maxIterations: 5 })],
+  steps: [loop({ steps: [StubRevisor], until: (_c, s: RevisaoState) => s.aprovado })],
 })
-export class TesteWorkflow {}
+class TesteWorkflow {}
 
 test("para assim que é aprovado", async () => {
-  const app = Thena.create(TesteWorkflow);
-  await app.run({ input: { message: "vai" } });
-  await app.dispose();
+  await Thena.create(TesteWorkflow).run({ input: { message: "vai" } });
+  expect(rodadas).toEqual([1, 2, 3]); // parou sozinho, não no teto
 });
 ```
 
@@ -66,31 +66,31 @@ parada — sem modelo.
 
 ## 3. A camada do modelo, falsificada
 
-Um middleware `chat` substitui a chamada ao provider inteira, o que permite
-roteirizar uma conversa completa:
+Um middleware `chat` substitui a chamada ao provider inteira:
 
 ```ts
-function modeloRoteirizado(respostas: RawAssistant[]) {
-  let i = 0;
-  return {
-    name: "roteirizado",
-    chat: async () => respostas[i++] ?? { content: "pronto", toolCalls: [] },
-  };
-}
-
-test("se recupera de um erro de tool", async () => {
-  const app = Thena.create(ExplorerWorkflow, config);
-  await app.use(
-    modeloRoteirizado([
-      { content: "", toolCalls: [{ name: "read_file", arguments: { path: "nao" } }] },
-      { content: "", toolCalls: [{ name: "read_file", arguments: { path: "README.md" } }] },
-      { content: "É um framework.", toolCalls: [] },
-    ]),
-  );
-
-  expect(await app.run({ input: { message: "o que é isto?" } })).toContain("framework");
-  await app.dispose();
+await app.use({
+  name: "modelo-falso",
+  chat: async () => ({ content: "APROVADO", toolCalls: [] }),
 });
+```
+
+Isso basta para a maioria dos testes: o agente roda, as tools rodam, o laço roda,
+e nada toca a rede.
+
+Quando você precisa que o modelo diga algo *diferente* a cada turno — para testar
+que o agente se recupera de um erro de tool, por exemplo — devolva as respostas em
+ordem:
+
+```ts
+const respostas = [
+  { content: "", toolCalls: [{ name: "read_file", arguments: { path: "nao" } }] },
+  { content: "", toolCalls: [{ name: "read_file", arguments: { path: "README.md" } }] },
+  { content: "É um framework.", toolCalls: [] },
+];
+
+let turno = 0;
+await app.use({ name: "roteirizado", chat: async () => respostas[turno++] });
 ```
 
 Sem rede, determinístico, rápido — e testa o laço, a tool, a recuperação de erro e

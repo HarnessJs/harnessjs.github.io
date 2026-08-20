@@ -40,31 +40,24 @@ that guarantee is worth a lot in production.
 ## Observability plugin
 
 ```ts
-export function otelPlugin(): ThenaPlugin {
-  const spans = new Map<string, Span>();
-
-  return {
-    name: "otel",
-
-    onEvent(event) {
-      if (event.phase === "start") {
-        const parent = event.parentId ? spans.get(event.parentId) : undefined;
-        spans.set(event.id, tracer.startSpan(`${event.kind}:${event.name}`, { parent }));
-        return;
-      }
-      const span = spans.get(event.id);
-      if (!span) return;
-      if (event.status === "error") span.recordException(event.error ?? "");
-      span.end();
-      spans.delete(event.id);
-    },
-  };
-}
+export const metrics: ThenaPlugin = {
+  name: "metrics",
+  onEvent(event) {
+    if (event.phase !== "end") return;
+    statsd.timing(`agent.${event.kind}`, event.durationMs!);
+  },
+};
 ```
 
-`id` and `parentId` are what let you rebuild the tree; `runId` keeps concurrent
-runs apart. Delete on `end` — a long-lived process that never cleans that map
-leaks.
+The event carries `kind`, `name`, `durationMs`, `status`, `error`, and the ids.
+That is enough for metrics, for a log line, or for a webhook.
+
+**Tracing needs one more thing: state between the two phases.** Open a span on
+`"start"`, close it on `"end"`, and key whatever holds them by `event.id` —
+`parentId` is what nests them, `runId` is what keeps concurrent runs apart.
+
+Whatever you use to hold open spans, remove each entry when it closes. A
+long-lived process that only ever adds will leak.
 
 ## Interceptors
 

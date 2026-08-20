@@ -40,31 +40,25 @@ quebrar uma execução, e essa garantia vale muito em produção.
 ## Plugin de observabilidade
 
 ```ts
-export function otelPlugin(): ThenaPlugin {
-  const spans = new Map<string, Span>();
-
-  return {
-    name: "otel",
-
-    onEvent(evento) {
-      if (evento.phase === "start") {
-        const pai = evento.parentId ? spans.get(evento.parentId) : undefined;
-        spans.set(evento.id, tracer.startSpan(`${evento.kind}:${evento.name}`, { parent: pai }));
-        return;
-      }
-      const span = spans.get(evento.id);
-      if (!span) return;
-      if (evento.status === "error") span.recordException(evento.error ?? "");
-      span.end();
-      spans.delete(evento.id);
-    },
-  };
-}
+export const metricas: ThenaPlugin = {
+  name: "metricas",
+  onEvent(evento) {
+    if (evento.phase !== "end") return;
+    statsd.timing(`agent.${evento.kind}`, evento.durationMs!);
+  },
+};
 ```
 
-`id` e `parentId` são o que permitem reconstruir a árvore; o `runId` mantém
-execuções concorrentes separadas. Apague no `end` — um processo de vida longa que
-nunca limpa esse mapa vaza memória.
+O evento carrega `kind`, `name`, `durationMs`, `status`, `error` e os ids. Isso
+basta para métrica, para uma linha de log, ou para um webhook.
+
+**Tracing precisa de mais uma coisa: estado entre as duas fases.** Abra um span
+no `"start"`, feche no `"end"`, e indexe o que os guarda por `event.id` — o
+`parentId` é o que aninha, o `runId` é o que mantém execuções concorrentes
+separadas.
+
+Seja lá o que você use para guardar os spans abertos, remova cada entrada ao
+fechar. Um processo de vida longa que só acrescenta vaza memória.
 
 ## Interceptadores
 

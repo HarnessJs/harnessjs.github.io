@@ -39,30 +39,26 @@ aviso antecipado de que a tarefa passou do que o modelo dá conta.
 serviço movimentado. Encaminhe os eventos:
 
 ```ts
-export function otelPlugin(): ThenaPlugin {
-  const spans = new Map<string, Span>();
-
-  return {
-    name: "otel",
-    onEvent(evento) {
-      if (evento.phase === "start") {
-        const pai = evento.parentId ? spans.get(evento.parentId) : undefined;
-        spans.set(evento.id, tracer.startSpan(`${evento.kind}:${evento.name}`, { parent: pai }));
-        return;
-      }
-      const span = spans.get(evento.id);
-      if (!span) return;
-      if (evento.status === "error") span.recordException(evento.error ?? "");
-      span.end();
-      spans.delete(evento.id);
-    },
-  };
-}
+export const metricas: ThenaPlugin = {
+  name: "metricas",
+  onEvent(evento) {
+    if (evento.phase !== "end") return;
+    statsd.timing(`agent.${evento.kind}`, evento.durationMs!);
+  },
+};
 ```
 
-`id`/`parentId` reconstroem a árvore; o `runId` mantém execuções concorrentes
-separadas. Apagar no `end` não é opcional — um processo de vida longa que nunca
-limpa esse mapa vaza memória.
+```ts
+await app.use(metricas);
+```
+
+É essa a interface inteira. Todo campo de que você precisa está no evento:
+`kind`, `name`, `durationMs`, `status`, `runId`.
+
+Para tracing distribuído, o `id` e o `parentId` são o que permitem aninhar spans
+— abra um no `phase: "start"`, feche no `"end"`. Guarde os spans abertos por
+`event.id`, e remova cada um ao fechar; um processo de vida longa que nunca limpa
+isso vaza memória.
 
 Use `onEvent` em vez de middleware `tool`/`chat` para observação: uma exceção no
 `onEvent` é engolida e não consegue quebrar uma execução. Essa garantia vale muito
