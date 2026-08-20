@@ -23,7 +23,7 @@ question is not *"how do I detect injection?"* but:
 That answer is entirely a function of how you built the agent, and it is where
 every mechanism below applies.
 
-## The four principles, and where each one lives
+## The five principles, and where each one lives
 
 | Principle | The mechanism ThenaJS gives you |
 | --- | --- |
@@ -167,7 +167,23 @@ async afterResponse(response: string, ctx: Context) {
 This is the layer that catches exfiltration — an injection that convinced the
 agent to *read* something it should not repeat.
 
-## 4. Where authorisation goes, and why it matters
+## 5. Audit what happened
+
+An attack you cannot see is one you cannot respond to. The run's tree is written
+by the same mechanism you already use for debugging:
+
+```ts
+ctx.meta({ deniedTool: inv.name, tenant: ctx.data.tenantId });
+```
+
+That lands on the step's node, so a refused tool is a count in the report rather
+than something to grep for. In production, forward the events to your own stack
+with a plugin — see [Observability](/en/best-practices/observability).
+
+Note the trade-off with [redaction](/en/advanced/redaction): the report is where
+you look after an incident, and it is also a file with your users' text in it.
+
+## Where authorisation goes, and why it matters
 
 Not all interception points are equally safe. The tool chain is:
 
@@ -202,7 +218,7 @@ tool: async (inv, next) => {
 Use `beforeTool` for one agent's own behaviour. Use a tool middleware for
 anything that is a **rule**.
 
-## 5. Limit the blast radius
+## 4. Limit the blast radius
 
 An agent with no ceiling is a way to spend your money, and an injection that
 causes a loop is a bill:

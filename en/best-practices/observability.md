@@ -4,9 +4,9 @@ An agent's control flow is a model's decision, so "what happened" is not
 inferable from your code. Everything below exists to make it inferable from data
 instead.
 
-## Three tools, three moments
+## Four destinations, one stream
 
-| | When | Persists | Use for |
+| Destination | When | Persists | Use for |
 | --- | --- | --- | --- |
 | [`log`](/en/devtools/logging) | live, terminal | no | development, and one request in production |
 | [Flow](/en/devtools/flow) | live, browser graph | no | watching a slow or stuck run |
@@ -37,6 +37,9 @@ early warning that the task has outgrown the model.
 
 `report: true` writes a folder per run — right for development, wrong for a busy
 service. Forward events instead:
+
+`statsd` below is your own metrics client — the plugin's job is only to hand it
+the event.
 
 ```ts
 export const metrics: ThenaPlugin = {

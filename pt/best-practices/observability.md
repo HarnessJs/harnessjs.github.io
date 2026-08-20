@@ -4,9 +4,9 @@ O controle de fluxo de um agente é decisão de um modelo, então "o que acontec
 não é dedutível do seu código. Tudo abaixo existe para torná-lo dedutível a partir
 de dados.
 
-## Três ferramentas, três momentos
+## Quatro destinos, um stream
 
-| | Quando | Persiste | Use para |
+| Destino | Quando | Persiste | Use para |
 | --- | --- | --- | --- |
 | [`log`](/pt/devtools/logging) | ao vivo, terminal | não | desenvolvimento, e uma requisição em produção |
 | [Flow](/pt/devtools/flow) | ao vivo, grafo no navegador | não | acompanhar uma execução lenta ou travada |
@@ -37,6 +37,9 @@ aviso antecipado de que a tarefa passou do que o modelo dá conta.
 
 `report: true` grava uma pasta por execução — certo em desenvolvimento, errado num
 serviço movimentado. Encaminhe os eventos:
+
+O `statsd` abaixo é o seu cliente de métricas — o trabalho do plugin é só
+entregar o evento a ele.
 
 ```ts
 export const metricas: ThenaPlugin = {

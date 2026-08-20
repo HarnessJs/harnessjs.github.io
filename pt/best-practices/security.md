@@ -23,7 +23,7 @@ pergunta útil não é *"como eu detecto injection?"*, e sim:
 Essa resposta é inteiramente função de como você construiu o agente, e é onde
 todo mecanismo abaixo se aplica.
 
-## Os quatro princípios, e onde cada um mora
+## Os cinco princípios, e onde cada um mora
 
 | Princípio | O mecanismo que o ThenaJS te dá |
 | --- | --- |
@@ -169,7 +169,25 @@ async afterResponse(resposta: string, ctx: Context) {
 É esta a camada que pega exfiltração — uma injection que convenceu o agente a
 *ler* algo que ele não deveria repetir.
 
-## 4. Onde a autorização vai, e por que isso importa
+## 5. Audite o que aconteceu
+
+Um ataque que você não enxerga é um ataque a que você não responde. A árvore da
+execução é escrita pelo mesmo mecanismo que você já usa para depurar:
+
+```ts
+ctx.meta({ toolNegada: inv.name, tenant: ctx.data.tenantId });
+```
+
+Isso cai no nó do passo, então uma tool recusada vira uma contagem no report, e
+não algo para procurar com grep. Em produção, encaminhe os eventos para a sua
+stack com um plugin — veja
+[Observabilidade](/pt/best-practices/observability).
+
+Repare no compromisso com o [mascaramento](/pt/advanced/redaction): o report é
+onde você olha depois de um incidente, e é também um arquivo com o texto dos seus
+usuários dentro.
+
+## Onde a autorização vai, e por que isso importa
 
 Nem todo ponto de interceptação é igualmente seguro. A cadeia de tool é:
 
@@ -204,7 +222,7 @@ tool: async (inv, next) => {
 Use `beforeTool` para o comportamento próprio de um agente. Use middleware de
 tool para qualquer coisa que seja uma **regra**.
 
-## 5. Limite o raio do dano
+## 4. Limite o raio do dano
 
 Um agente sem teto é uma forma de gastar o seu dinheiro, e uma injection que
 provoca um laço é uma fatura:
