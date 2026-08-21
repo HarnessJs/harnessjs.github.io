@@ -66,7 +66,9 @@ async onError(error: Error, ctx: Context) {
 }
 ```
 
-Bom para um ramo de um `parallel` que não pode derrubar os outros. Ruim como
+Bom para um ramo de um `parallel` que não pode derrubar os outros — um ramo que
+lança cancela os irmãos, então capturar aqui é o que mantém o bloco vivo. Ruim
+como
 captura genérica — um agente que engole tudo reporta sucesso enquanto não produz
 nada.
 

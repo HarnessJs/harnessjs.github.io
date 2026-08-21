@@ -49,7 +49,8 @@ um enxerga o que o anterior disse.
 
 `parallel([...])` roda os passos ao mesmo tempo, sobre o mesmo estado.
 
-Como todos escrevem em `ctx.output`, a última escrita vence. Leia os resultados
+`ctx.output` acaba sendo o do último ramo declarado, então as outras respostas
+se perdem. Leia os resultados
 no histórico compartilhado, ou faça cada agente gravar num campo próprio:
 
 ```ts
@@ -129,7 +130,9 @@ Embrulhe num `loop` se a tarefa exige investigação.
 **Ninguém grava o que o `until` lê.** É a causa mais comum de um laço que sempre
 bate no `maxIterations`. Ponha um `onExhausted` para descobrir.
 
-**Achar que `parallel` isola.** Ele compartilha o estado. Para isolamento de
+**Dar `push` num array compartilhado a partir de todo ramo do `parallel`.** O
+histórico é ordenado; o seu objeto de estado ainda é escrito na ordem de
+conclusão. Atribua a chaves distintas. Para isolamento de
 verdade, use uma execução aninhada.
 
 ## Relacionado

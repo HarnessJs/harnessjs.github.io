@@ -68,7 +68,8 @@ O passo 4 é a parte fechada. Ele trata os campos nativos de tool call e resgata
 chamadas que o modelo escreveu como texto, em vários formatos. O
 `toolCallSource` no nó `chat` registra qual caminho foi usado.
 
-Um `loop` repete tudo isso; um `parallel` roda vários contra o mesmo `ctx`.
+Um `loop` repete tudo isso; um `parallel` roda vários de uma vez, cada um no
+próprio contexto de passo, sobre uma leitura congelada do histórico.
 
 ## A observação é condicional
 

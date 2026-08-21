@@ -51,7 +51,8 @@ parallel([AnalistaDeSegurancaAgent, AnalistaDePerformanceAgent]);
 ```
 
 Todos recebem o mesmo estado e rodam ao mesmo tempo. Como todos escrevem em
-`ctx.output`, a última escrita vence — leia os resultados no histórico
+`ctx.output`, o valor final é o do último ramo declarado — leia os resultados no
+histórico
 compartilhado, ou faça cada agente gravar num campo próprio do `ctx`.
 
 ## Laço

@@ -32,6 +32,13 @@ O número para olhar é o `promptTokens` nos nós `chat` do report. Se ele cresc
 turno a turno e se aproxima da janela do seu modelo, apare. Se não, esta página
 não é o seu problema.
 
+Com a janela ligada, os nós `chat` dela trazem `windowTrimmed`, `messagesSent`,
+`messagesOriginal` e `windowOrphansDropped`. O último é separado dos outros de
+propósito: "cortei para caber no teto" e "cortei mais uma para manter um par de
+tool inteiro" são causas diferentes, e um `windowOrphansDropped` que nunca é zero
+quer dizer que a janela está apertada o bastante para cair dentro de turnos com
+tool.
+
 ## As opções
 
 | Opção | O que faz |
@@ -44,6 +51,12 @@ não é o seu problema.
 ::: tip `maxTurns` conta mensagens, não idas e voltas
 Um turno com tool ocupa duas mensagens (`assistant` + `tool`), então
 `maxTurns: 12` guarda cerca de 6 trocas.
+
+É um **teto, não uma cota**: se o corte fosse cair entre um `assistant` que
+chamou uma tool e o `tool` que responde a ela, a janela recua além da órfã e
+manda uma mensagem a menos. Provider recusa par quebrado com `400`, e `400` é
+erro de contrato que o retry não retenta — então uma janela que salva o par é a
+única que serve.
 :::
 
 O `maxCharsPerTool` costuma ser o de maior valor. Saída de tool é o que mais

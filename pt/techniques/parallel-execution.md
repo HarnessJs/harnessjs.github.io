@@ -9,7 +9,8 @@ import { parallel } from "@thenajs/core";
 export class RevisaoWorkflow {}
 ```
 
-Os três rodam ao mesmo tempo, sobre o **mesmo estado**.
+Os três rodam ao mesmo tempo, e o bloco é determinístico: todo ramo lê o mesmo
+histórico, e as escritas entram na ordem em que você os declarou.
 
 ## Quando compensa
 
@@ -21,13 +22,23 @@ Não ajuda quando um ramo posterior precisa do que um anterior descobriu. Isso �
 sequência, e escrever como `parallel` produz agentes raciocinando sobre um
 histórico incompleto.
 
-## A pegadinha do estado compartilhado
+## O que o bloco garante
 
-Todo ramo escreve em `ctx.output`, então **a última escrita vence** — e qual é a
-última é uma corrida. Nunca leia `ctx.output` depois de um bloco `parallel`
-esperando a resposta de um ramo específico.
+Três coisas, e elas valem independentemente da latência do modelo:
 
-Duas formas de coletar resultados direito.
+| | |
+| --- | --- |
+| **Uma leitura** | Todo ramo vê o histórico como ele estava quando o bloco abriu. Um ramo que espera antes de ler continua sem enxergar o irmão. |
+| **Escritas ordenadas** | `parallel([A, B, C])` anexa `A`, `B`, `C` ao histórico nessa ordem, mesmo que `C` responda primeiro. |
+| **Tudo ou nada** | Um ramo que lança cancela os irmãos, e nada do bloco é anexado. |
+
+`ctx.output` e `ctx.turn` são os do **último ramo declarado** — o `C` do exemplo.
+É estável, mas ainda é a resposta de um ramo só entre três, então raramente é o
+que você quer.
+
+## Coletando os resultados
+
+Duas formas, e as duas são melhores que ler `ctx.output`.
 
 **Cada agente grava num campo próprio:**
 
@@ -70,19 +81,22 @@ export class SegurancaAgent {
 }
 ```
 
-::: warning O objeto de estado é compartilhado, não copiado
-Ramos mutando o mesmo array ou objeto podem se intercalar. Atribuir a chaves
-distintas é seguro; dar `push` no mesmo array a partir de três ramos dá uma ordem
-não determinística.
+::: warning O objeto de estado é compartilhado, e é escrito na ordem de conclusão
+A garantia de ordem cobre o **histórico**, não o seu objeto de estado. Os ramos
+continuam concorrentes, então `this.s.achados.seguranca = …` numa chave distinta
+é seguro, enquanto dar `push` no mesmo array a partir de três ramos continua
+dando ordem não determinística. Atribua a chaves; não anexe a uma lista.
 :::
 
-## O histórico também é compartilhado
+## Histórico
 
-Todos os ramos anexam ao mesmo `history`. Com três agentes, a conversa do pai
-termina com três turnos de assistente cuja ordem varia entre execuções — o que
-torna a execução não reproduzível mesmo em `temperature: 0`.
+Todos os ramos anexam ao mesmo `history`, e o bloco coloca os turnos deles na
+**ordem de declaração**. Com `parallel([Seguranca, Performance, Estilo])`, a
+conversa do pai lê `Seguranca`, `Performance`, `Estilo` em toda execução — então
+um prompt que diga "o primeiro parecer é o de segurança" se sustenta, e a
+execução é reproduzível em `temperature: 0`.
 
-Se isso importa, mantenha os ramos fora do transcript e promova as saídas a
+Se você preferir manter os ramos fora do transcript e promover as saídas a
 contexto:
 
 ```ts
@@ -92,13 +106,21 @@ afterResponse(resposta: string, ctx: Context) {
 }
 ```
 
-Ou isole cada ramo como uma [execução aninhada](/pt/techniques/nested-runs), que
-dá a cada um o próprio histórico e devolve uma string.
+O ramo então não contribui com nada para o histórico do pai — ele corta a própria
+cópia, e só o que um ramo acrescenta é fundido de volta.
+
+Para um ramo que também precise do próprio `ctx` e da própria linha de
+orçamento, use uma [execução aninhada](/pt/techniques/nested-runs).
 
 ## Falha
 
-Um ramo que lança derruba o bloco, e portanto a execução. Não existe "continue
-com os que funcionaram" — se você quer isso, capture dentro do agente:
+Um ramo que lança derruba o bloco, e portanto a execução. Os irmãos são
+**cancelados** — uma chamada ao modelo em andamento é abortada em vez de terminar
+e cobrar por uma resposta que ninguém vai ler — e nada do bloco chega ao
+histórico.
+
+Não existe "continue com os que funcionaram". Se você quer isso, capture dentro
+do agente, o que impede o ramo de falhar:
 
 ```ts
 async onError(error: Error, ctx: Context) {
@@ -137,12 +159,15 @@ modelo.
 
 ## Erros comuns
 
-**Ler `ctx.output` depois do bloco.** É o ramo que terminou por último.
+**Ler `ctx.output` depois do bloco.** É o do último ramo declarado, e as outras
+N-1 respostas se perderam. Colete em chaves.
 
-**Usar `parallel` para um pipeline.** Se B precisa do achado de A, é sequência.
+**Usar `parallel` para um pipeline.** Se B precisa do achado de A, é sequência —
+e aqui a garantia joga contra você: B está lendo o histórico de antes do bloco,
+então não consegue ver A nem por acidente.
 
-**Esperar isolamento.** Estado e histórico são compartilhados. Isolamento é
-execução aninhada.
+**Dar `push` num array compartilhado a partir de todo ramo.** O histórico é
+ordenado; o seu objeto de estado não é.
 
 ## Relacionado
 

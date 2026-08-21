@@ -25,8 +25,9 @@ For what steps genuinely exchange, prefer the typed workflow state
 
 ## Run controls
 
-These belong to the **run**, not the step. In a `parallel` block the step fields
-are shared between branches; these apply to the whole execution.
+These belong to the **run**, not the step. In a `parallel` block each branch gets
+its own step context — `context()` inside a branch resolves to that branch — while
+these apply to the whole execution.
 
 | Member | Type | Notes |
 | --- | --- | --- |

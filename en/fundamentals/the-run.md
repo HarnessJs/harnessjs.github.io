@@ -18,7 +18,8 @@ app.run()
 ```
 
 A `loop` repeats its inner block until `until` is true. A `parallel` runs its
-steps at the same time, over the same state.
+steps at the same time, over one frozen read of the history, and appends what
+they produced in declaration order.
 
 ## One agent turn, in detail
 

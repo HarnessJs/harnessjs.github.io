@@ -41,7 +41,8 @@ Independent perspectives on the same input.
 ```
 
 The summariser is not optional: something has to combine the branches, because
-`ctx.output` after a `parallel` is whichever branch finished last. See
+`ctx.output` after a `parallel` is the last declared branch's, and the other
+answers are gone. See
 [Parallel execution](/en/techniques/parallel-execution).
 
 ### Critic loop

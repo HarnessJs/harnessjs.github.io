@@ -25,8 +25,9 @@ workflow (`@Workflow({ state })`).
 
 ## Controles da execução
 
-Estes pertencem à **execução**, não ao passo. Num bloco `parallel` os campos de
-passo são compartilhados entre os ramos; estes valem para a execução inteira.
+Estes pertencem à **execução**, não ao passo. Num bloco `parallel` cada ramo tem
+o próprio contexto de passo — `context()` dentro de um ramo resolve para aquele
+ramo — enquanto estes valem para a execução inteira.
 
 | Membro | Tipo | Observações |
 | --- | --- | --- |

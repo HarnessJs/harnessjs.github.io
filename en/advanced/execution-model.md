@@ -68,8 +68,8 @@ Step 4 is the closed part. It handles native tool-call fields and rescues calls
 the model wrote as text, in several formats. `toolCallSource` on the `chat` node
 records which path was taken.
 
-A `loop` repeats the whole of that; a `parallel` runs several of them against the
-same `ctx`.
+A `loop` repeats the whole of that; a `parallel` runs several of them at once,
+each in its own step context, over one frozen read of the history.
 
 ## Observation is conditional
 

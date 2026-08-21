@@ -32,6 +32,13 @@ The number to look at is `promptTokens` on the `chat` nodes in the report. If it
 grows turn over turn and approaches your model's window, trim. If it does not,
 this page is not your problem.
 
+Once the window is on, its own `chat` nodes carry `windowTrimmed`,
+`messagesSent`, `messagesOriginal` and `windowOrphansDropped`. The last one is
+separate from the others on purpose: "I cut to fit the ceiling" and "I cut one
+more to keep a tool pair whole" are different causes, and a
+`windowOrphansDropped` that is never zero means the window is tight enough to be
+landing inside tool turns.
+
 ## The options
 
 | Option | What it does |
@@ -44,6 +51,12 @@ this page is not your problem.
 ::: tip `maxTurns` counts messages, not round trips
 A turn with a tool takes two messages (`assistant` + `tool`), so `maxTurns: 12`
 keeps about 6 exchanges.
+
+It is a **ceiling, not a quota**: if the cut would land between an `assistant`
+that called a tool and the `tool` answering it, the window walks forward past the
+orphan and sends one message fewer. Providers reject a split pair with a `400`,
+and a `400` is a contract error the retry will not retry — so a window that
+saved the pair is the only useful kind.
 :::
 
 `maxCharsPerTool` is usually the highest-value one. Tool output is what inflates

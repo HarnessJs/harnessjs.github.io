@@ -18,7 +18,8 @@ app.run()
 ```
 
 O `loop` repete o bloco interno até o `until` ser verdadeiro. O `parallel` roda
-os passos ao mesmo tempo, sobre o mesmo estado.
+os passos ao mesmo tempo, sobre uma leitura congelada do histórico, e anexa o que
+eles produziram na ordem de declaração.
 
 ## Um turno de agente, em detalhe
 

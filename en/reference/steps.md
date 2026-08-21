@@ -25,8 +25,14 @@ parallel([SecurityAgent, PerfAgent]);
 Runs its steps at the same time, over the **same state**. Returns a
 `ParallelStep` (`{ kind: "parallel", steps }`).
 
-Because every branch writes `ctx.output`, the last write wins. Read the results
-from the shared history, or have each agent write to a field of its own.
+Every branch reads the history as it was when the block opened, and the branches'
+turns are appended in **declaration order** — `parallel([A, B])` gives `A, B`
+even if `B` answers first. `ctx.output` and `ctx.turn` are the last declared
+branch's. A branch that throws cancels its siblings and the block appends
+nothing.
+
+Read the results from the history, or have each agent write to a field of its
+own.
 
 ## `loop(options)`
 

@@ -45,10 +45,12 @@ the previous said.
 
 ### Parallel
 
-`parallel([...])` runs its steps at the same time over the same state.
+`parallel([...])` runs its steps at the same time. Every branch reads the same
+history, and their turns are appended in declaration order.
 
-Because they all write `ctx.output`, the last write wins. Read the results from
-the shared history, or have each agent write to a field of its own:
+`ctx.output` ends up being the last declared branch's, so the other answers are
+lost. Read the results from the history, or have each agent write to a field of
+its own:
 
 ```ts
 export class SecurityAgent {
@@ -127,8 +129,9 @@ in a `loop` if the task needs investigation.
 **Nothing writes what `until` reads.** The single most common cause of a loop
 that always hits `maxIterations`. Set `onExhausted` to find out.
 
-**Assuming `parallel` isolates.** It shares the state. For real isolation, use a
-nested run.
+**`push`-ing to a shared array from every `parallel` branch.** The history is
+ordered; your own state object is still written in completion order. Assign to
+distinct keys.
 
 ## Related
 

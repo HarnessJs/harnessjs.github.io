@@ -25,7 +25,12 @@ parallel([SegurancaAgent, PerfAgent]);
 Roda os passos ao mesmo tempo, sobre o **mesmo estado**. Devolve um
 `ParallelStep` (`{ kind: "parallel", steps }`).
 
-Como cada ramo escreve em `ctx.output`, a última escrita vence. Leia os
+Todo ramo lê o histórico como ele estava quando o bloco abriu, e os turnos dos
+ramos são anexados na **ordem de declaração** — `parallel([A, B])` dá `A, B`
+mesmo que `B` responda primeiro. `ctx.output` e `ctx.turn` são os do último ramo
+declarado. Um ramo que lança cancela os irmãos e o bloco não anexa nada.
+
+Leia os
 resultados no histórico compartilhado, ou faça cada agente gravar num campo
 próprio.
 

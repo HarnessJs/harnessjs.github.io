@@ -42,7 +42,8 @@ Perspectivas independentes sobre a mesma entrada.
 ```
 
 O resumidor não é opcional: alguém precisa combinar os ramos, porque o
-`ctx.output` depois de um `parallel` é o do ramo que terminou por último. Veja
+`ctx.output` depois de um `parallel` é o do último ramo declarado, e as outras
+respostas se perderam. Veja
 [Execução paralela](/pt/techniques/parallel-execution).
 
 ### Laço com crítico

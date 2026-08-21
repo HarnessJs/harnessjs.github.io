@@ -9,7 +9,8 @@ import { parallel } from "@thenajs/core";
 export class ReviewWorkflow {}
 ```
 
-All three run at the same time, over the **same state**.
+All three run at the same time, and the block is deterministic: every branch
+reads the same history, and their writes land in the order you declared them.
 
 ## When it pays
 
@@ -21,13 +22,23 @@ It does not help when a later branch needs what an earlier one found. That is a
 sequence, and writing it as `parallel` produces agents reasoning from an
 incomplete history.
 
-## The shared-state catch
+## What the block guarantees
 
-Every branch writes `ctx.output`, so **the last write wins** — and which one is
-last is a race. Never read `ctx.output` after a `parallel` block expecting a
-particular branch's answer.
+Three things, and they hold whatever the model's latency does:
 
-Two ways to collect results properly.
+| | |
+| --- | --- |
+| **One read** | Every branch sees the history as it was when the block opened. A branch that awaits before reading still cannot see a sibling. |
+| **Ordered writes** | `parallel([A, B, C])` appends `A`, `B`, `C` to the history in that order, even if `C` answers first. |
+| **All or nothing** | A branch that throws cancels its siblings, and nothing from the block is appended. |
+
+`ctx.output` and `ctx.turn` are the **last declared** branch's — `C` in the
+example. That is stable, but it is still one branch's answer out of three, so it
+is rarely what you want.
+
+## Collecting the results
+
+Two ways, and both are better than reading `ctx.output`.
 
 **Each agent writes its own field:**
 
@@ -70,20 +81,23 @@ export class SecurityAgent {
 }
 ```
 
-::: warning The state object is shared, not copied
-Branches mutating the same array or object can interleave. Assigning to distinct
-keys is safe; `push`-ing to one shared array from three branches gives you a
-non-deterministic order.
+::: warning The state object is shared, and it is written in completion order
+The ordering guarantee covers the **history**, not your own state object. The
+branches still run concurrently, so `this.s.findings.security = …` on a distinct
+key is safe, while `push`-ing to one shared array from three branches still
+gives you a non-deterministic order. Assign to keys; do not append to a list.
 :::
 
-## History is shared too
+## History
 
-All branches append to the same `history`. With three agents, the parent
-conversation ends up with three assistant turns whose order varies between runs —
-which makes the run non-reproducible even at `temperature: 0`.
+All branches append to the same `history`, and the block puts their turns in
+**declaration order**. With `parallel([Security, Performance, Style])` the parent
+conversation reads `Security`, `Performance`, `Style` on every run — so a prompt
+that says "the first opinion is the security one" holds, and the run is
+reproducible at `temperature: 0`.
 
-If that matters, keep the branches out of the transcript and promote their
-outputs to context:
+If you would rather keep the branches out of the transcript entirely and promote
+their outputs to context:
 
 ```ts
 afterResponse(response: string, ctx: Context) {
@@ -92,13 +106,21 @@ afterResponse(response: string, ctx: Context) {
 }
 ```
 
-Or isolate each branch as a [nested run](/en/techniques/nested-runs), which gives
-each its own history and returns a single string.
+The branch then contributes nothing to the parent history — it trims its own
+copy, and only what a branch adds is merged back.
+
+For a branch that also needs its own `ctx` and its own budget line, use a
+[nested run](/en/techniques/nested-runs).
 
 ## Failure
 
-A branch that throws fails the block, and therefore the run. There is no
-"continue with the ones that worked" — if you want that, catch inside the agent:
+A branch that throws fails the block, and therefore the run. The siblings are
+**cancelled** — an in-flight model call is aborted rather than left to finish and
+bill you for an answer nobody will read — and nothing from the block reaches the
+history.
+
+There is no "continue with the ones that worked". If you want that, catch inside
+the agent, which keeps the branch from ever failing:
 
 ```ts
 async onError(error: Error, ctx: Context) {
@@ -136,11 +158,15 @@ calls.
 
 ## Common mistakes
 
-**Reading `ctx.output` after the block.** It is whichever branch finished last.
+**Reading `ctx.output` after the block.** It is the last declared branch's, and
+the other N-1 answers are gone. Collect into keys instead.
 
-**Using `parallel` for a pipeline.** If B needs A's finding, it is a sequence.
+**Using `parallel` for a pipeline.** If B needs A's finding, it is a sequence —
+and here the guarantee works against you: B is reading the history from before
+the block, so it cannot see A even by accident.
 
-**Expecting isolation.** State and history are shared. Isolation is a nested run.
+**`push`-ing to a shared array from every branch.** The history is ordered; your
+own state object is not.
 
 ## Related
 

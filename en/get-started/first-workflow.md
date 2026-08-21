@@ -49,9 +49,10 @@ For independent agents looking at the same input:
 parallel([SecurityAnalystAgent, PerformanceAnalystAgent]);
 ```
 
-They all get the same state and run at the same time. Because they all write to
-`ctx.output`, the last write wins — read the results from the shared history, or
-have each agent write into a field of its own on `ctx`.
+They all read the same history and run at the same time, and their turns land in
+the order you declared them. `ctx.output` ends up being the last declared
+branch's — read the results from the history, or have each agent write into a
+field of its own on `ctx`.
 
 ## Loop
 

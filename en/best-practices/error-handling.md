@@ -66,7 +66,9 @@ async onError(error: Error, ctx: Context) {
 }
 ```
 
-Good for one branch of a `parallel` that must not take down the others. Bad as a
+Good for one branch of a `parallel` that must not take down the others — a branch
+that throws cancels its siblings, so catching here is what keeps the block alive.
+Bad as a
 blanket catch — an agent that swallows everything reports success while producing
 nothing.
 
