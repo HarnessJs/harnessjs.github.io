@@ -1,5 +1,34 @@
 # Migration
 
+## From 0.10 to 0.11
+
+### `@thenajs/tools` is back, without the shell tool
+
+The package was removed in `0.10` because it existed to ship a shell tool, and
+handing arbitrary command execution to a model is the application's decision, not
+the framework's. **That has not changed — there is no shell tool.**
+
+What it ships now is [`ParallelTool`](/en/techniques/batched-tool-calls), which
+depends on framework internals a copied snippet cannot reach.
+
+```bash
+npm install @thenajs/tools
+```
+
+Nothing to migrate: if you were not using the package, ignore it.
+
+### `@tools()` is new
+
+A tool can now reach the other tools of the same agent — see
+[Injection](/en/reference/injection). Additive; nothing you wrote changes.
+
+### Packages now carry their `LICENSE`
+
+Every manifest declared MIT, but no license file shipped in the tarballs. `0.11`
+fixes that. Nothing to do — it only matters if a license scanner flagged the
+package.
+
+
 ThenaJS is at **0.9.x**. In `0.x`, a caret range does not move the minor version —
 `^0.6.0` in your `package.json` will not pull 0.9 on its own. These notes matter
 when you install fresh, or bump on purpose.

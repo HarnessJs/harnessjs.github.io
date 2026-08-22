@@ -154,6 +154,16 @@ fails at compile time only in the sense that the framework rejects it at startup
 [thena] The class "MyTool" is not decorated with @Tool().
 ```
 
+## Ready-made tools
+
+`@thenajs/tools` ships tools that need framework internals a copied snippet
+cannot reach. Today that means
+[`ParallelTool`](/en/techniques/batched-tool-calls), which packs several calls
+into one turn.
+
+Tools you could write yourself in ten minutes are not there — they are in
+[Tool recipes](/en/techniques/tool-recipes), to copy and own.
+
 ## Related
 
 - [Errors](/en/fundamentals/errors) — recoverable vs fatal

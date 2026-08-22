@@ -62,6 +62,36 @@ yet. The runtime fails with that explanation instead of injecting `undefined`.
 Use it in a tool's `execute`, or take `ctx` as a hook parameter.
 :::
 
+## `@tools()` — the agent's other tools
+
+```ts
+async execute(@input() args: Args, @tools() siblings: ToolType[]) {
+  const target = siblings.find((t) => t.name === "read_file");
+  return target?.execute({ path: "src/main.ts" });
+}
+```
+
+Gives a tool the **other tools registered on the same agent**, already wrapped in
+the middleware chain. That wrapping is the point: a sibling called this way still
+opens its own report node and passes through the agent hooks, the
+`app.use({ tool })` middlewares, budget accounting and the tool error policy. A
+list handed in from outside would lose all five.
+
+Validate the arguments yourself before dispatching — the wrapper runs the chain,
+not the schema:
+
+```ts
+const args = target.schema.parse(raw);
+await target.execute(args);
+```
+
+::: warning `execute` only
+The tools are wrapped per step invocation, so during the constructor the list
+does not exist yet. Using `@tools()` there fails with that explanation.
+:::
+
+[`ParallelTool`](/en/techniques/batched-tool-calls) is built on this.
+
 ## `context()` as a function
 
 ```ts

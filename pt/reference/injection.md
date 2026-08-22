@@ -62,6 +62,35 @@ existe. O runtime falha com essa explicação em vez de injetar `undefined`. Use
 `execute` de uma tool, ou receba o `ctx` como parâmetro do hook.
 :::
 
+## `@tools()` — as outras tools do agente
+
+```ts
+async execute(@input() args: Args, @tools() siblings: ToolType[]) {
+  const alvo = siblings.find((t) => t.name === "read_file");
+  return alvo?.execute({ path: "src/main.ts" });
+}
+```
+
+Dá a uma tool as **outras tools registradas no mesmo agente**, já embrulhadas na
+cadeia de middleware. O embrulho é o ponto: uma irmã chamada por aqui continua
+abrindo o próprio nó no report e passando pelos hooks do agente, pelos
+middlewares de `app.use({ tool })`, pela contagem de orçamento e pela política de
+erro. Uma lista entregue por fora perderia as cinco.
+
+Valide os argumentos antes de despachar — o embrulho roda a cadeia, não o schema:
+
+```ts
+const args = alvo.schema.parse(bruto);
+await alvo.execute(args);
+```
+
+::: warning Só no `execute`
+As tools são embrulhadas por invocação do passo, então no construtor a lista
+ainda não existe. Usar `@tools()` lá falha com essa explicação.
+:::
+
+A [`ParallelTool`](/pt/techniques/batched-tool-calls) é construída sobre isto.
+
 ## `context()` como função
 
 ```ts

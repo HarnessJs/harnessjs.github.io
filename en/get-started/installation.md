@@ -92,8 +92,10 @@ CLI:
 npm install @thenajs/core zod
 ```
 
-The other packages are optional: `@thenajs/qdrant-client` for vector memory,
-`@thenajs/flow` to watch a run live, and `@thenajs/cli` for scaffolding.
+The other packages are optional: `@thenajs/tools` for ready-made tools such as
+[`ParallelTool`](/en/techniques/batched-tool-calls), `@thenajs/qdrant-client` for
+vector memory, `@thenajs/flow` to watch a run live, and `@thenajs/cli` for
+scaffolding.
 
 Then enable decorators in `tsconfig.json`:
 

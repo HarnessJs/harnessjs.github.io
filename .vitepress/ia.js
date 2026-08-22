@@ -117,6 +117,10 @@ export const IA = [
         slug: "tool-recipes",
         title: { en: "Tool recipes", pt: "Receitas de tools" },
       },
+      {
+        slug: "batched-tool-calls",
+        title: { en: "Batching tool calls", pt: "Chamadas de tool em lote" },
+      },
       { slug: "loops", title: { en: "Loops", pt: "Laços" } },
       {
         slug: "parallel-execution",

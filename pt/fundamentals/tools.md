@@ -153,6 +153,16 @@ rejeitada na subida:
 [thena] A classe "MinhaTool" não está decorada com @Tool().
 ```
 
+## Tools prontas
+
+O `@thenajs/tools` publica tools que dependem de coisas do framework que um
+trecho copiado não alcança. Hoje isso quer dizer a
+[`ParallelTool`](/pt/techniques/batched-tool-calls), que empacota várias chamadas
+num turno só.
+
+Tool que você escreve em dez minutos não está lá — está nas
+[Receitas de tools](/pt/techniques/tool-recipes), para copiar e ser sua.
+
 ## Relacionado
 
 - [Erros](/pt/fundamentals/errors) — recuperável e fatal
