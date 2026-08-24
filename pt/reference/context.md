@@ -91,7 +91,7 @@ ctx.state.append("memory", "O usuário prefere respostas curtas");
 ctx.state.set("history", ctx.state.history.slice(0, -1));
 ```
 
-O `run({ memory })` semeia o bucket `memory`.
+O `run({ state })` semeia o bucket `memory`.
 
 ## `abort()` e `stop()`
 

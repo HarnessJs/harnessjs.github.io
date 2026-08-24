@@ -6,8 +6,8 @@ abre o próprio contexto — nada é global.
 ```ts
 const app = Thena.create(MeuWorkflow, { log: true, report: true });
 
-await app.run({ input, report: false }); // esta não grava nada
-await app.run({ input, log: "verbose" }); // esta é barulhenta
+await app.run({ prompt, report: false }); // esta não grava nada
+await app.run({ prompt, log: "verbose" }); // esta é barulhenta
 ```
 
 ## O que varia por execução
@@ -19,7 +19,7 @@ await app.run({ input, log: "verbose" }); // esta é barulhenta
 | `budget` | não existe orçamento em nível de app; ele só existe por execução |
 | `signal` | cancelamento |
 | `observe` | força a observação ligada |
-| `memory` | contexto durável que o modelo lê |
+| `state` | de onde a execução parte — o `history`, o `tasks` e o `memory` que ela herda |
 | `data` | o seu canal, que o modelo nunca vê |
 
 O `stores` do `ThenaConfig` é outra coisa — as classes de banco vetorial — e não é
@@ -34,7 +34,7 @@ app.post("/runs", async (req, res) => {
   const debug = req.header("x-debug") === "1";
 
   const resposta = await agente.run({
-    input: req.body,
+    prompt: req.body.message,
     log: debug ? "verbose" : false,
     report: debug ? { dir: `report/${req.id}` } : false,
   });
@@ -49,7 +49,7 @@ Sem redeploy, sem flag global, sem barulho das outras requisições em voo.
 
 ```ts
 await app.run({
-  input,
+  prompt,
   report: { content: false }, // mantém a árvore, descarta o texto
 });
 ```
@@ -75,7 +75,7 @@ export class AssistantAgent {}
 ```
 
 ```ts
-await app.run({ input, data: { tenantId: "acme", plano: "pro" } });
+await app.run({ prompt, data: { tenantId: "acme", plano: "pro" } });
 ```
 
 É esse o mecanismo por trás do multi-tenancy: um
@@ -92,14 +92,14 @@ Os dois viajam com a execução; só um chega ao modelo.
 
 ```ts
 await app.run({
-  input,
-  memory: { plano: "pro" }, // serializado no `system` — o modelo lê
+  prompt,
+  state: { memory: ["plano: pro"] }, // serializado no `system` — o modelo lê
   data: { tenantId: "acme" }, // nunca serializado, nunca no report
 });
 ```
 
 Um id de tenant, um token interno, um id de correlação pertencem ao `data`. O que
-o modelo precisa saber para responder pertence ao `memory`.
+o modelo precisa saber para responder pertence ao `state.memory`.
 
 Tipe uma vez e fica tipado:
 

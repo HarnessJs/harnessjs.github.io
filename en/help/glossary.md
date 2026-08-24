@@ -21,8 +21,9 @@ alternate between two words for the same thing.
 | Term | What it means | Portuguese |
 | --- | --- | --- |
 | **Context** (`ctx`) | The object that crosses every step of a run. Carries `state`, `output`, `turn`, `data`, `signal` and the run controls. | Contexto |
+| **Prompt** | Two different things, and the docs always say which. The **agent's prompt** is `@Agent({ prompt })`, a markdown file, fixed per class, sent as the `system` message. The **run's prompt** is `run({ prompt })`, a string, one per execution, sent as the first `user` message. | Prompt |
 | **State** | The class declared in `@Workflow({ state })`, instantiated once per run and injected with `@state()`. | Estado |
-| **Memory** | The agent's working memory: `run({ memory })`, read by the model in every turn of this run, gone when it ends. | Memória |
+| **Memory** | The agent's working memory: `run({ state })`, read by the model in every turn of this run, gone when it ends. | Memória |
 | **Vector memory** | Long-term memory: `VectorMemory`, injected by `@memory()`, searched by similarity and outliving the run. The databases behind it are `ThenaConfig.stores`. | Memória vetorial |
 | **Data** | `run({ data })`. The run's own data channel. Never goes to the model, never reaches the report. | Data |
 | **Budget** | A ceiling for the whole run — time, calls, tokens, cost. | Orçamento |
@@ -56,8 +57,10 @@ alternate between two words for the same thing.
 ## Words we deliberately do not use
 
 - **"Chain"** — the framework has workflows and steps. No chains.
-- **"Prompt engineering"** — the prompt is a markdown file you edit. We say
-  writing a prompt.
+- **"Prompt engineering"** — the agent's prompt is a markdown file you edit. We
+  say writing a prompt.
+- **"Prompt"** without saying which one — see the entry above. In body text, say
+  *the agent's prompt* or *the run's prompt*.
 - **"LLM"** in body text — we say **model**. `LLM` appears only where it names
   the category, as in "a framework for LLM agents".
 - **"Session"** — a run is a run. What persists between runs is memory.

@@ -46,7 +46,7 @@ landing inside tool turns.
 | `maxTurns` | how many messages from the end to keep |
 | `maxChars` | character ceiling for the history; trims from the start until it fits |
 | `maxCharsPerTool` | ceiling per tool observation |
-| `warnIndexFailure` | the note left in place of what was cut; `false` cuts silently |
+| `notice` | the note left in place of what was cut; `false` cuts silently |
 
 ::: tip `maxTurns` counts messages, not round trips
 A turn with a tool takes two messages (`assistant` + `tool`), so `maxTurns: 12`
@@ -78,7 +78,7 @@ every turn.
 ```ts
 contextWindow({
   maxTurns: 12,
-  warnIndexFailure: "[…earlier history omitted to fit the window…]",
+  notice: "[…previous history omitted to fit the window…]",
 });
 ```
 
@@ -88,10 +88,14 @@ start in the middle and may repeat work it already did.
 `false` cuts silently. Use it only when you have measured that the note itself is
 confusing the model.
 
-::: warning About that option name
-`warnIndexFailure` holds the notice text, which its name does not suggest — it
-looks like a bad rename. It is public API, so this is the real name; expect it to
-change in a future version.
+::: tip It used to be called `warnIndexFailure`
+Renamed to `notice` in **0.12.0**. The old name held the notice text without its
+name suggesting anything of the sort — it came from an automated rename that
+walked across files, and `warnIndexFailure` is really the handler for a failure
+to write the report index, elsewhere in the codebase.
+
+`warnIndexFailure` still works, marked `@deprecated`, so nothing breaks on
+upgrade. When both are given, `notice` wins.
 :::
 
 ## Trimming at the source

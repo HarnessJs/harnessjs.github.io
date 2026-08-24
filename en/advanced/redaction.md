@@ -65,7 +65,7 @@ For runs over real personal data, the tool is not a better pattern — it is not
 writing the text at all:
 
 ```ts
-await app.run({ input, report: { content: false } });
+await app.run({ prompt, report: { content: false } });
 ```
 
 That keeps the tree, the durations and the telemetry, and drops every prompt,

@@ -11,8 +11,8 @@ Three ways to end a run early, and they are not interchangeable.
 ## From outside: `signal`
 
 ```ts
-app.run({ input, signal: req.signal });                 // client disconnected
-app.run({ input, signal: AbortSignal.timeout(30_000) }); // hard deadline
+app.run({ prompt, signal: req.signal });                 // client disconnected
+app.run({ prompt, signal: AbortSignal.timeout(30_000) }); // hard deadline
 ```
 
 Combines with the handle's `abort()` — whichever fires first wins.
@@ -20,7 +20,7 @@ Combines with the handle's `abort()` — whichever fires first wins.
 ## From the handle: `abort()`
 
 ```ts
-const exec = app.run({ input });
+const exec = app.run({ prompt });
 exec.abort(new Error("user cancelled"));
 ```
 
@@ -128,7 +128,7 @@ The two together are what makes a run behave under a real client:
 ```ts
 app.post("/runs", async (req, res) => {
   const exec = agent.run({
-    input: req.body,
+    prompt: req.body.message,
     signal: req.signal, // the client hung up
     budget: { maxDurationMs: 120_000 }, // it is taking too long
   });

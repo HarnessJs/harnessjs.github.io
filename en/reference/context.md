@@ -91,7 +91,7 @@ ctx.state.append("memory", "The user prefers short answers");
 ctx.state.set("history", ctx.state.history.slice(0, -1));
 ```
 
-`run({ memory })` seeds the `memory` bucket.
+`run({ state })` seeds the `memory` bucket.
 
 ## `abort()` vs `stop()`
 

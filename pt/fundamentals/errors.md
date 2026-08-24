@@ -119,7 +119,7 @@ Desde a 0.9, uma execução que falha chega até você:
 
 ```ts
 try {
-  await app.run({ input });
+  await app.run({ prompt });
 } catch (err) {
   if (err instanceof BudgetExceededError) {
     console.warn(`estourou ${err.info.reason}: ${err.info.value} de ${err.info.limit}`);

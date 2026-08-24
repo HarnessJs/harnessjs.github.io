@@ -47,7 +47,7 @@ A pergunta que aparece o tempo todo: *"onde essa lógica vai?"*
 | algo que um agente faz em volta do turno dele | um hook |
 | algo que *todo* agente faz | um middleware de plugin |
 | o que esta execução carrega e o modelo não pode ver | `run({ data })` |
-| o que o modelo precisa saber nesta execução | `run({ memory })` |
+| o que o modelo precisa saber nesta execução | `run({ state })` |
 
 Dois modos de falha vêm de errar isso: controle de fluxo escrito dentro de
 prompts ("se você já conferiu três arquivos, pare"), e conteúdo de prompt escrito
@@ -146,7 +146,7 @@ Persistência, autenticação, rate limiting, filas, retentativas dos *seus* pr�
 serviços, e a camada HTTP. O ThenaJS roda agentes; ele não é um framework de
 aplicação.
 
-O `run({ memory })` é semeado por você e não persiste. Se uma conversa precisa
+O `run({ state })` é semeado por você e não persiste. Se uma conversa precisa
 sobreviver entre execuções, a sua aplicação carrega e passa.
 
 ## Relacionado

@@ -12,8 +12,8 @@ intercambiáveis.
 ## De fora: `signal`
 
 ```ts
-app.run({ input, signal: req.signal });                  // cliente desconectou
-app.run({ input, signal: AbortSignal.timeout(30_000) }); // prazo duro
+app.run({ prompt, signal: req.signal });                  // cliente desconectou
+app.run({ prompt, signal: AbortSignal.timeout(30_000) }); // prazo duro
 ```
 
 Combina com o `abort()` do handle — o que disparar primeiro vence.
@@ -21,7 +21,7 @@ Combina com o `abort()` do handle — o que disparar primeiro vence.
 ## Pelo handle: `abort()`
 
 ```ts
-const exec = app.run({ input });
+const exec = app.run({ prompt });
 exec.abort(new Error("cancelado pelo usuário"));
 ```
 
@@ -130,7 +130,7 @@ Os dois juntos é o que faz uma execução se comportar com um cliente real:
 ```ts
 app.post("/runs", async (req, res) => {
   const exec = agente.run({
-    input: req.body,
+    prompt: req.body.message,
     signal: req.signal, // o cliente caiu
     budget: { maxDurationMs: 120_000 }, // está demorando demais
   });

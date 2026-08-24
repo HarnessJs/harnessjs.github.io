@@ -47,7 +47,7 @@ The question that comes up constantly: *"where does this logic go?"*
 | something one agent does around its turn | a hook |
 | something *every* agent does | a plugin middleware |
 | what this run carries but the model must not see | `run({ data })` |
-| what the model must know for this run | `run({ memory })` |
+| what the model must know for this run | `run({ state })` |
 
 Two failure modes come from getting this wrong: control flow written into prompts
 ("if you have already checked three files, stop"), and prompt content written
@@ -144,7 +144,7 @@ Persistence, authentication, rate limiting, queueing, retries of your *own*
 services, and the HTTP layer. ThenaJS runs agents; it is not an application
 framework.
 
-`run({ memory })` is seeded by you and does not persist. If a conversation must
+`run({ state })` is seeded by you and does not persist. If a conversation must
 survive between runs, your application loads it and passes it in.
 
 ## Related

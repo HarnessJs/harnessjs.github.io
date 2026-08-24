@@ -4,8 +4,8 @@ O `app.run()` devolve um `RunHandle`, não uma `Promise`. A regra: **com `await`
 você pede o resultado; sem `await`, você pede a execução.**
 
 ```ts
-const texto = await app.run({ input }); // o resultado
-const exec = app.run({ input }); // a execução
+const texto = await app.run({ prompt }); // o resultado
+const exec = app.run({ prompt }); // a execução
 ```
 
 Ele é *thenable*, então as duas coisas convivem sem que o `run` precise virar
@@ -18,7 +18,7 @@ acontecendo, e **guardar** a execução para reencontrá-la depois — o padrão
 responder um `runId` num POST e acompanhar por SSE.
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 
 exec.runId; // disponível de forma síncrona, antes do primeiro turno
 exec.result; // uma Promise comum — compõe com Promise.all
@@ -79,7 +79,7 @@ A observação liga sozinha quando há `report`, `log`, ou um plugin com `onEven
 Quando o único consumidor é o handle, diga:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 Você recebe o aviso uma vez, em vez de um `for await` que nunca rende.
@@ -90,7 +90,11 @@ O motivo de o handle existir:
 
 ```ts
 app.post("/runs", (req, res) => {
-  const exec = agente.run({ input: req.body, observe: true, signal: req.signal });
+  const exec = agente.run({
+    prompt: req.body.message,
+    observe: true,
+    signal: req.signal,
+  });
   res.json({ runId: exec.runId }); // respondido antes do primeiro turno
   execucoes.set(exec.runId, exec);
 });

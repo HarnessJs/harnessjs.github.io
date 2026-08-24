@@ -71,7 +71,7 @@ em produção.
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: req.header("x-debug") ? "verbose" : false,
   report: req.header("x-debug") ? { dir: `report/${req.id}` } : false,
 });
@@ -101,7 +101,7 @@ quando nada está observando, então chame à vontade.
 O `runId` está disponível de forma síncrona, antes do primeiro turno:
 
 ```ts
-const exec = app.run({ input, data: { requestId: req.id } });
+const exec = app.run({ prompt, data: { requestId: req.id } });
 req.log.info({ runId: exec.runId }, "execução do agente iniciada");
 ```
 

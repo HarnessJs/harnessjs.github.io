@@ -109,7 +109,7 @@ exportado. Veja [Mascaramento](/pt/advanced/redaction).
 o próprio contexto:
 
 ```ts
-await app.run({ input, report: false, log: "verbose" });
+await app.run({ prompt, report: false, log: "verbose" });
 ```
 
 Veja [Configuração por execução](/pt/techniques/per-run-configuration).

@@ -33,15 +33,15 @@ export class DeployTool {
 
   async execute(@input() { repository }: { repository: string }) {
     return this.runtime.run(DeployWorkflow, {
-      input: { message: `Deploy ${repository}` },
-      memory: { environment: "staging" }, // explicit context for the child
+      prompt: `Deploy ${repository}`,
+      state: { memory: ["environment: staging"] }, // explicit context for the child
     });
   }
 }
 ```
 
-The child starts with fresh state: it gets only what you passed in `input` and
-`memory`.
+The child starts with fresh state: it gets only what you passed in `prompt` and
+`state`.
 
 That is the point — its noise does not pollute the parent — and it has a cost: it
 starts not knowing what was asked. To pass something from the parent's
@@ -55,8 +55,8 @@ async execute(
   const original = ctx.state.history.find((m) => m.role === "user")?.content;
 
   return this.runtime.run(DeployWorkflow, {
-    input: { message: `Deploy ${repository}` },
-    memory: { originalRequest: original },
+    prompt: `Deploy ${repository}`,
+    state: { memory: [`originalRequest: ${original}`] },
   });
 }
 ```
@@ -106,7 +106,7 @@ gets a chained tracker and whichever limit blows first wins:
 
 ```ts
 return this.runtime.run(DeployWorkflow, {
-  input: { message: `Deploy ${repository}` },
+  prompt: `Deploy ${repository}`,
   budget: { maxChatCalls: 5 }, // its own ceiling, still inside the parent's
 });
 ```
@@ -128,7 +128,7 @@ It is stateless — everything the run needs comes from the `RunContext` — and
 returns a plain `Promise`, not a `RunHandle`. A nested run is not separately
 cancellable: it is cancelled with its parent, through the shared signal.
 
-Only `input`, `memory` and `budget` are forwarded.
+Only `prompt`, `state` and `budget` are forwarded.
 
 ## When not to use it
 

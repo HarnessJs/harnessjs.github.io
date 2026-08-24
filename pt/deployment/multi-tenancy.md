@@ -63,12 +63,12 @@ O genérico é o que faz o `tenantId` chegar como `string`. Sem ele, `data` é
 const app = Thena.create<string, DadosDaConta>(AssistantWorkflow, config);
 
 const acme = await app.run({
-  input: { message: "…" },
+  prompt: "…",
   data: { tenantId: "acme" },
 });
 
 const globex = await app.run({
-  input: { message: "…" },
+  prompt: "…",
   data: { tenantId: "globex" },
 });
 ```
@@ -100,7 +100,7 @@ decorator dentro da tool, a forma função em qualquer outro lugar da execução
 
 ```ts
 data: { tenantId: "acme" }; // nunca chega ao modelo, nunca ao report
-memory: { plano: "pro" }; // serializado no `system` — o modelo lê
+state: { memory: ["plano: pro"] }; // serializado no `system` — o modelo lê
 ```
 
 Um id de tenant no `memory` iria para o prompt e para o report em disco. Pior, o
@@ -139,7 +139,7 @@ Orçamentos são por execução, então são por tenant de graça:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   data: { tenantId },
   budget: {
     maxCostUsd: conta.creditoRestante,
@@ -190,7 +190,7 @@ Sobrescritas por execução mantêm os prompts de um tenant fora da pasta de out
 
 ```ts
 await app.run({
-  input,
+  prompt,
   data: { tenantId },
   report: { dir: `report/${tenantId}` },
 });

@@ -16,7 +16,7 @@ import { MyWorkflow } from "./workflows/my.workflow";
 const app = Thena.create(MyWorkflow, { log: true });
 await app.use(thenaFlow());
 
-await app.run({ input: { message: "Hello" } });
+await app.run({ prompt: "Hello" });
 ```
 
 Open <http://127.0.0.1:4100>. Nodes appear as the run advances.
@@ -81,7 +81,7 @@ the result. End it with `Ctrl+C`, or call `await app.dispose()` when you want th
 script to finish on its own:
 
 ```ts
-await app.run({ input: { message: "Hello" } });
+await app.run({ prompt: "Hello" });
 await app.dispose(); // closes the site and releases the process
 ```
 

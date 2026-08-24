@@ -108,7 +108,7 @@ See [State and context](/en/fundamentals/state-and-context).
 
 ```ts
 const app = Thena.create(ReviewWorkflow, config);
-const result = await app.run({ input: { message: "Review src/" } });
+const result = await app.run({ prompt: "Review src/" });
 await app.dispose();
 ```
 

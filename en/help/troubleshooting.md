@@ -184,7 +184,7 @@ and does not ask the provider to stream — it is the zero-cost path, and it is
 about twice as fast per run. Turn observation on explicitly:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 Or turn on `report`, `log`, or a plugin with `onEvent`, any of which enables it

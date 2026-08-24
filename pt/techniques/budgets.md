@@ -5,7 +5,7 @@ tempo de parede, chamadas ao modelo, execuções de tool, tokens e dinheiro.
 
 ```ts
 await app.run({
-  input: { message: "Revise src/" },
+  prompt: "Revise src/",
   budget: {
     maxDurationMs: 60_000,
     maxChatCalls: 20,
@@ -56,7 +56,7 @@ visível — uma operação de cobrança, uma migração.
 import { BudgetExceededError } from "@thenajs/core";
 
 try {
-  await app.run({ input, budget: { maxCostUsd: 1, mode: "throw" } });
+  await app.run({ prompt, budget: { maxCostUsd: 1, mode: "throw" } });
 } catch (err) {
   if (err instanceof BudgetExceededError) {
     console.warn(`${err.info.reason}: ${err.info.value} de ${err.info.limit}`);
@@ -142,7 +142,7 @@ quem estourar primeiro.
 
 ```ts
 await this.runtime.run(DeployWorkflow, {
-  input: { message: "deploy" },
+  prompt: "deploy",
   budget: { maxChatCalls: 5 },
 });
 ```
@@ -164,7 +164,7 @@ São ferramentas diferentes:
 Para um limite duro de tempo de parede, o `signal` é mais preciso:
 
 ```ts
-app.run({ input, signal: AbortSignal.timeout(30_000) });
+app.run({ prompt, signal: AbortSignal.timeout(30_000) });
 ```
 
 Veja [Cancelamento](/pt/techniques/cancellation).

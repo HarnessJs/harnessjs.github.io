@@ -2,7 +2,7 @@
 
 ```ts
 const app = Thena.create(MeuWorkflow, config); // não é async
-const exec = app.run({ input: { message: "oi" } });
+const exec = app.run({ prompt: "oi" });
 const resultado = await exec;
 await app.dispose();
 ```
@@ -38,8 +38,8 @@ Chamadas concorrentes ao `run` são seguras: cada uma abre o próprio `RunContex
 
 ```ts
 await app.run({
-  input: { message: "Revise src/" },
-  memory: { userId: "123" },
+  prompt: "Revise src/",
+  state: { memory: ["userId: 123"] },
   data: { contaId: "acme" },
   budget: { maxChatCalls: 20 },
   signal: AbortSignal.timeout(30_000),
@@ -51,8 +51,8 @@ await app.run({
 
 | Opção | Tipo | Observações |
 | --- | --- | --- |
-| `input` | `WorkflowInput` | `message` vira a entrada inicial; senão o objeto inteiro é serializado |
-| `memory` | `Record<string, unknown>` | semeado no `memory` do estado — **o modelo lê** |
+| `prompt` | `string` | a primeira mensagem `user` da execução. Não é o `prompt` do agente, que é o markdown de sistema dele |
+| `state` | `Partial<State>` | de onde a execução parte: `history`, `tasks`, `memory`. O `handle.state` devolve o próximo |
 | `data` | `D` | o seu canal — **nunca vai ao modelo nem ao report** |
 | `budget` | `RunBudget` | sem ele, nada é medido |
 | `signal` | `AbortSignal` | combina com o `abort()` do handle; o primeiro a disparar vence |

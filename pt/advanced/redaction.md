@@ -67,7 +67,7 @@ Para execuções sobre dado pessoal real, a ferramenta não é um padrão melhor
 não gravar o texto:
 
 ```ts
-await app.run({ input, report: { content: false } });
+await app.run({ prompt, report: { content: false } });
 ```
 
 Isso mantém a árvore, as durações e a telemetria, e descarta todo prompt,

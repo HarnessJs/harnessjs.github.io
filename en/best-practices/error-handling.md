@@ -109,7 +109,7 @@ Since 0.9, `app.run()` rejects rather than swallowing:
 
 ```ts
 try {
-  await app.run({ input, budget: { maxCostUsd: 1, mode: "throw" } });
+  await app.run({ prompt, budget: { maxCostUsd: 1, mode: "throw" } });
 } catch (err) {
   if (err instanceof BudgetExceededError) {
     metrics.increment(`budget.${err.info.reason}`);

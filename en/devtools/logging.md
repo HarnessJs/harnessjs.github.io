@@ -88,7 +88,7 @@ debug one request in production without turning the whole service loud:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: req.header("x-debug") ? "verbose" : false,
 });
 ```

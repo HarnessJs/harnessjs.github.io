@@ -25,7 +25,7 @@ compartilhado torna os `429`s mais frequentes, não menos.
 
 ```ts
 const app = Thena.create(MeuWorkflow, config); // uma vez
-await Promise.all(requisicoes.map((r) => app.run({ input: r })));
+await Promise.all(requisicoes.map((r) => app.run({ prompt: r })));
 ```
 
 Cada execução abre o próprio `RunContext` — estado, orçamento, histórico,
@@ -54,7 +54,7 @@ Ponha uma fila na frente:
 import pLimit from "p-limit";
 const limite = pLimit(10);
 
-await Promise.all(requisicoes.map((r) => limite(() => app.run({ input: r }))));
+await Promise.all(requisicoes.map((r) => limite(() => app.run({ prompt: r }))));
 ```
 
 Para um Ollama local, o número útil é pequeno — muitas vezes 1 ou 2. Ele serve uma
@@ -70,7 +70,7 @@ Para um serviço de volume alto, é a maior alavanca dentro do framework:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: false,
   report: debug ? { dir: `report/${req.id}` } : false,
 });

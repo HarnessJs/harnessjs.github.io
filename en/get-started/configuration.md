@@ -81,8 +81,8 @@ and fields named like `api_key` or `password`.
 
 ```ts
 await app.run({
-  input: { message: "Review the src/ directory" },
-  memory: { userId: "123" },
+  prompt: "Review the src/ directory",
+  state: { memory: ["userId: 123"] },
   budget: { maxChatCalls: 20, maxCostUsd: 0.5 },
   signal: AbortSignal.timeout(30_000),
 });
@@ -90,28 +90,28 @@ await app.run({
 
 | Option | What it does |
 | --- | --- |
-| `input` | the run's input. `message` becomes the initial pipeline input; otherwise the whole object is serialised |
-| `memory` | durable context, serialised into the `system` message — **the model reads it** |
+| `prompt` | the first `user` message of the run — what the model reads before anything else |
+| `state` | where the run starts: `history`, `tasks`, `memory`. `tasks` and `memory` are serialised into the `system` message — **the model reads them** |
 | `data` | your own data channel, available at `ctx.data` — **never goes to the model** |
 | `budget` | a ceiling for the whole run: time, calls, tokens, cost |
 | `signal` | cancels the run from outside |
 | `observe` | turns on live observation even with no report, log or plugin |
 | `report` / `log` | override `ThenaConfig` for this run only |
 
-### `memory` vs `data`
+### `state.memory` vs `data`
 
 They look similar and are opposites. Both travel with the run; only one reaches
 the model.
 
 ```ts
 await app.run({
-  input: { message: "What is my plan?" },
-  memory: { plan: "pro" }, // the model reads this
+  prompt: "What is my plan?",
+  state: { memory: ["plan: pro"] }, // the model reads this
   data: { accountId: "acme" }, // the model never sees this
 });
 ```
 
-Use `memory` for context the model **should** read. Use `data` for what the run
+Use `state.memory` for context the model **should** read. Use `data` for what the run
 needs to carry and the model should not see — a tenant id, an internal token, a
 correlation id. `data` also stays out of the report.
 

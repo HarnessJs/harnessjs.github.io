@@ -84,8 +84,8 @@ para acrescentar padrões sem perder os de fábrica.
 
 ```ts
 await app.run({
-  input: { message: "Revise o diretório src/" },
-  memory: { userId: "123" },
+  prompt: "Revise o diretório src/",
+  state: { memory: ["userId: 123"] },
   budget: { maxChatCalls: 20, maxCostUsd: 0.5 },
   signal: AbortSignal.timeout(30_000),
 });
@@ -93,28 +93,28 @@ await app.run({
 
 | Opção | O que faz |
 | --- | --- |
-| `input` | a entrada da execução. `message` vira a entrada inicial do pipeline; senão o objeto inteiro é serializado |
-| `memory` | contexto durável, serializado na mensagem `system` — **o modelo lê** |
+| `prompt` | a primeira mensagem `user` da execução — o que o modelo lê antes de tudo o mais |
+| `state` | de onde a execução parte: `history`, `tasks`, `memory`. O `tasks` e o `memory` são serializados na mensagem `system` — **o modelo lê** |
 | `data` | o seu canal de dados, disponível em `ctx.data` — **nunca vai para o modelo** |
 | `budget` | o teto da execução inteira: tempo, chamadas, tokens, custo |
 | `signal` | cancela a execução de fora |
 | `observe` | liga a observação ao vivo mesmo sem report, log ou plugin |
 | `report` / `log` | sobrescrevem o `ThenaConfig` só nesta execução |
 
-### `memory` e `data`
+### `state.memory` e `data`
 
 Parecem a mesma coisa e são opostos. Os dois viajam com a execução; só um chega ao
 modelo.
 
 ```ts
 await app.run({
-  input: { message: "Qual é o meu plano?" },
-  memory: { plano: "pro" }, // o modelo lê isto
+  prompt: "Qual é o meu plano?",
+  state: { memory: ["plano: pro"] }, // o modelo lê isto
   data: { contaId: "acme" }, // o modelo nunca vê isto
 });
 ```
 
-Use `memory` para o contexto que o modelo **deve** ler. Use `data` para o que a
+Use `state.memory` para o contexto que o modelo **deve** ler. Use `data` para o que a
 execução precisa carregar e o modelo não deve ver — um id de tenant, um token
 interno, um id de correlação. O `data` também fica fora do report.
 

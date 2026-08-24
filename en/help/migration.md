@@ -1,5 +1,51 @@
 # Migration
 
+## From 0.11 to 0.12
+
+### `run({ input: { message } })` is now `run({ prompt })`
+
+```ts
+- await app.run({ input: { message: "Review src/" } });
++ await app.run({ prompt: "Review src/" });
+```
+
+The wrapper never earned its place. `input` was declared as an open bag, but
+nothing in the framework ever handed that object to your code — `@input()` is a
+different thing, the schema-validated arguments of a **tool**. The only consumer
+reduced it to a string before the run started. What was left was one level of
+nesting and a name suggesting the input/output pair of IO, on a method that by
+definition only takes input.
+
+Mechanical to migrate: drop the wrapper. It applies to nested runs through
+`WorkflowRuntime` too.
+
+### An `input` without `message` is no longer serialised
+
+Passing `{ input: { userId: 7 } }` used to JSON-serialise the whole object and
+make that the prompt. It was the only reason the type was open, and it turned a
+misspelled field into a silent success rather than an error.
+
+```ts
+- await app.run({ input: { userId: 7, action: "review" } });
++ await app.run({ prompt: JSON.stringify({ userId: 7, action: "review" }) });
+```
+
+Usually the better move is not to serialise at all. Structured payloads have two
+doors, and which one you want is decided by what the model may see:
+[`data`](/en/get-started/configuration#state-memory-vs-data) for what it must
+**not** read, `state.memory` for what it must.
+
+### `WorkflowInput` is gone from the package
+
+The type is no longer exported. `WorkflowRunOptions` still is, with `prompt` in
+place of `input`.
+
+### Two things are now called `prompt`
+
+`@Agent({ prompt })` is the agent's markdown system prompt, fixed per class.
+`run({ prompt })` is the user's turn, one per run. The docs always say which —
+see the [glossary](/en/help/glossary).
+
 ## From 0.10 to 0.11
 
 ### `@thenajs/tools` is back, without the shell tool
@@ -29,8 +75,8 @@ fixes that. Nothing to do — it only matters if a license scanner flagged the
 package.
 
 
-ThenaJS is at **0.9.x**. In `0.x`, a caret range does not move the minor version —
-`^0.6.0` in your `package.json` will not pull 0.9 on its own. These notes matter
+ThenaJS is at **0.12.x**. In `0.x`, a caret range does not move the minor version —
+`^0.11.0` in your `package.json` will not pull 0.12 on its own. These notes matter
 when you install fresh, or bump on purpose.
 
 ## From 0.6 to 0.9
@@ -44,7 +90,7 @@ Before, a failing run went quiet. Now the rejection reaches you.
 ```ts
 // handle it
 try {
-  await app.run({ input });
+  await app.run({ prompt });
 } catch (err) {
   // the error is yours now
 }
@@ -58,16 +104,16 @@ This is the one most likely to change behaviour you did not know you had.
 as a real `Promise` beyond `then`/`catch`/`finally`:
 
 ```ts
-await app.run({ input }); // fine
-app.run({ input }).catch(handle); // fine
-Promise.all([app.run({ input })]); // use .result
+await app.run({ prompt }); // fine
+app.run({ prompt }).catch(handle); // fine
+Promise.all([app.run({ prompt })]); // use .result
 ```
 
 The handle exists because a `Promise` cannot express three real needs: cancelling,
 observing while it happens, and holding the run to find it again later.
 
 ```ts
-const exec = app.run({ input });
+const exec = app.run({ prompt });
 exec.runId; // available synchronously
 exec.abort(); // cancel
 exec.result; // a plain Promise, if you need one
@@ -100,7 +146,7 @@ Observation turns on by itself when `report`, `log`, or a plugin with `onEvent` 
 present. If you use none of those:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 You will get a one-time console warning if you subscribe to a run that is not

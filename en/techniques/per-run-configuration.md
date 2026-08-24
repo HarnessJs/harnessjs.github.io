@@ -6,8 +6,8 @@ context — nothing is global.
 ```ts
 const app = Thena.create(MyWorkflow, { log: true, report: true });
 
-await app.run({ input, report: false }); // this one writes nothing
-await app.run({ input, log: "verbose" }); // this one is loud
+await app.run({ prompt, report: false }); // this one writes nothing
+await app.run({ prompt, log: "verbose" }); // this one is loud
 ```
 
 ## What can vary per run
@@ -19,7 +19,7 @@ await app.run({ input, log: "verbose" }); // this one is loud
 | `budget` | there is no app-level budget; it only exists per run |
 | `signal` | cancellation |
 | `observe` | forces observation on |
-| `memory` | durable context the model reads |
+| `state` | where the run starts — the `history`, `tasks` and `memory` it inherits |
 | `data` | your channel, which the model never sees |
 
 `stores` in `ThenaConfig` is a different thing — the vector store classes — and
@@ -34,7 +34,7 @@ app.post("/runs", async (req, res) => {
   const debug = req.header("x-debug") === "1";
 
   const answer = await agent.run({
-    input: req.body,
+    prompt: req.body.message,
     log: debug ? "verbose" : false,
     report: debug ? { dir: `report/${req.id}` } : false,
   });
@@ -49,7 +49,7 @@ No redeploy, no global flag, no noise from the other requests in flight.
 
 ```ts
 await app.run({
-  input,
+  prompt,
   report: { content: false }, // keep the tree, drop the text
 });
 ```
@@ -75,7 +75,7 @@ export class AssistantAgent {}
 ```
 
 ```ts
-await app.run({ input, data: { tenantId: "acme", tier: "pro" } });
+await app.run({ prompt, data: { tenantId: "acme", tier: "pro" } });
 ```
 
 This is the whole mechanism behind multi-tenancy:
@@ -92,14 +92,14 @@ Both travel with the run; only one reaches the model.
 
 ```ts
 await app.run({
-  input,
-  memory: { plan: "pro" }, // serialised into `system` — the model reads it
+  prompt,
+  state: { memory: ["plan: pro"] }, // serialised into `system` — the model reads it
   data: { tenantId: "acme" }, // never serialised, never in the report
 });
 ```
 
 A tenant id, an internal token, a correlation id belong in `data`. Anything the
-model must know to answer belongs in `memory`.
+model must know to answer belongs in `state.memory`.
 
 Type it once and it stays typed:
 

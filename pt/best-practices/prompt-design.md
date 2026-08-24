@@ -92,7 +92,7 @@ estão na mensagem `system`.
 [`run({ data })`](/pt/fundamentals/state-and-context#memory-e-data).
 
 **Fatos por execução.** O nome de um usuário, um plano, uma conta — isso vai no
-`run({ memory })`, que vira mensagem `system`. O `.md` é o mesmo para toda
+`run({ state })`, que vira mensagem `system`. O `.md` é o mesmo para toda
 execução.
 
 **Descrição de tool.** Descreva a tool no `@Tool({ description })` dela. Dizer

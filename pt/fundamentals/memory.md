@@ -5,7 +5,7 @@ para esta execução, e **memória de longo prazo** que sobrevive a ela.
 
 | | Mora | O modelo lê |
 | --- | --- | --- |
-| **De trabalho** — `run({ memory })` | no estado da execução, como mensagem `system` | a cada turno, inteira |
+| **De trabalho** — `run({ state })` | no estado da execução, como mensagem `system` | a cada turno, inteira |
 | **De longo prazo** — `VectorMemory`, via `@memory()` | num banco vetorial | só o que você `recall` e põe no prompt |
 
 Nenhuma das duas é automática no sentido que importa: nada é recuperado e
@@ -22,8 +22,8 @@ desde o primeiro turno:
 
 ```ts
 await app.run({
-  input: { message: "O que eu faço agora?" },
-  memory: { userId: "123", plano: "pro" },
+  prompt: "O que eu faço agora?",
+  state: { memory: ["userId: 123", "plano: pro"] },
 });
 ```
 
@@ -38,7 +38,8 @@ pertence ao [`run({ data })`](/pt/fundamentals/state-and-context#memory-e-data).
 
 A memória da execução não é persistente. Ela dura o que a execução durar.
 Persistir entre execuções é trabalho da sua aplicação — carregue, passe em
-`run({ memory })`, salve o que mudou.
+`run({ state })`, salve o que mudou. O `handle.state` devolve o estado com que a
+execução terminou.
 
 ## Memória vetorial
 

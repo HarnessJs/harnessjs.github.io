@@ -127,7 +127,7 @@ Uma execução sem `report`, `log`, plugin ou `observe: true` pula a construçã
 de CPU por execução**.
 
 ```ts
-await app.run({ input, log: false, report: debug ? { … } : false });
+await app.run({ prompt, log: false, report: debug ? { … } : false });
 ```
 
 Além disso, `report: true` num serviço movimentado é crescimento ilimitado de

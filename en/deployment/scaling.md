@@ -25,7 +25,7 @@ limit makes `429`s more frequent, not less.
 
 ```ts
 const app = Thena.create(MyWorkflow, config); // once
-await Promise.all(requests.map((r) => app.run({ input: r })));
+await Promise.all(requests.map((r) => app.run({ prompt: r })));
 ```
 
 Each run opens its own `RunContext` — state, budget, history, recorder, signal.
@@ -53,7 +53,7 @@ Put a queue in front:
 import pLimit from "p-limit";
 const limit = pLimit(10);
 
-await Promise.all(requests.map((r) => limit(() => app.run({ input: r }))));
+await Promise.all(requests.map((r) => limit(() => app.run({ prompt: r }))));
 ```
 
 For a local Ollama, the useful number is small — often 1 or 2. It serves one
@@ -69,7 +69,7 @@ For a high-volume service, that is the single biggest lever inside the framework
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: false,
   report: debug ? { dir: `report/${req.id}` } : false,
 });

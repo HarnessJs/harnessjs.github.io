@@ -118,7 +118,7 @@ Since 0.9, a failing run reaches you:
 
 ```ts
 try {
-  await app.run({ input });
+  await app.run({ prompt });
 } catch (err) {
   if (err instanceof BudgetExceededError) {
     console.warn(`hit ${err.info.reason}: ${err.info.value} of ${err.info.limit}`);

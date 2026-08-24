@@ -59,7 +59,7 @@ import { ExplorerWorkflow } from "./workflows/explorer.workflow";
 async function bootstrap() {
   const app = Thena.create(ExplorerWorkflow, { log: true });
 
-  console.log(await app.run({ input: { message: "What does this project do?" } }));
+  console.log(await app.run({ prompt: "What does this project do?" }));
 
   await app.dispose();
 }

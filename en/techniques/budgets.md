@@ -5,7 +5,7 @@ clock, model calls, tool calls, tokens and dollars.
 
 ```ts
 await app.run({
-  input: { message: "Review src/" },
+  prompt: "Review src/",
   budget: {
     maxDurationMs: 60_000,
     maxChatCalls: 20,
@@ -56,7 +56,7 @@ operation, a migration.
 import { BudgetExceededError } from "@thenajs/core";
 
 try {
-  await app.run({ input, budget: { maxCostUsd: 1, mode: "throw" } });
+  await app.run({ prompt, budget: { maxCostUsd: 1, mode: "throw" } });
 } catch (err) {
   if (err instanceof BudgetExceededError) {
     console.warn(`${err.info.reason}: ${err.info.value} of ${err.info.limit}`);
@@ -140,7 +140,7 @@ whichever blows first wins.
 
 ```ts
 await this.runtime.run(DeployWorkflow, {
-  input: { message: "deploy" },
+  prompt: "deploy",
   budget: { maxChatCalls: 5 },
 });
 ```
@@ -162,7 +162,7 @@ They are different tools:
 For a hard wall-clock limit, `signal` is sharper:
 
 ```ts
-app.run({ input, signal: AbortSignal.timeout(30_000) });
+app.run({ prompt, signal: AbortSignal.timeout(30_000) });
 ```
 
 See [Cancellation](/en/techniques/cancellation).

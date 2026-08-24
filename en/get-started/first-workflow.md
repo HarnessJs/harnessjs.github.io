@@ -135,8 +135,8 @@ import { config } from "./config";
 const app = Thena.create(ReviewWorkflow, config);
 
 const verdict = await app.run({
-  input: { message: "Review the src/ directory" },
-  memory: { userId: "123" }, // durable context, becomes a `system` message
+  prompt: "Review the src/ directory",
+  state: { memory: ["userId: 123"] }, // durable context, becomes a `system` message
 });
 
 await app.dispose();

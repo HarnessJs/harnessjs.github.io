@@ -29,12 +29,12 @@ ctx.state.append("memory", "O usuário se chama Castro");
 ctx.state.set("history", ctx.state.history.slice(0, -1)); // remove o último turno
 ```
 
-O `memory` inicial é semeado no `run`:
+O estado de onde a execução parte é semeado no `run`:
 
 ```ts
 await app.run({
-  input: { message: "Olá" },
-  memory: { userId: "123", plano: "pro" }, // vira contexto durável
+  prompt: "Olá",
+  state: { memory: ["userId: 123", "plano: pro"] }, // vira contexto durável
 });
 ```
 
@@ -78,8 +78,8 @@ ao modelo.
 
 ```ts
 await app.run({
-  input: { message: "Qual é o meu plano?" },
-  memory: { plano: "pro" }, // serializado no `system` — o modelo lê
+  prompt: "Qual é o meu plano?",
+  state: { memory: ["plano: pro"] }, // serializado no `system` — o modelo lê
   data: { contaId: "acme" }, // nunca serializado, nunca no report
 });
 ```
@@ -94,7 +94,7 @@ O `data` é tipado por você:
 type MinhaExecucao = { contaId: string; regiao: string };
 
 const app = Thena.create<string, MinhaExecucao>(Fluxo, config);
-await app.run({ input, data: { contaId: "acme", regiao: "sa-east-1" } });
+await app.run({ prompt, data: { contaId: "acme", regiao: "sa-east-1" } });
 
 context<MinhaExecucao>().data.contaId; // string, sem cast
 ```

@@ -108,7 +108,7 @@ To add patterns without losing the built-in ones, use the exported
 its own context:
 
 ```ts
-await app.run({ input, report: false, log: "verbose" });
+await app.run({ prompt, report: false, log: "verbose" });
 ```
 
 See [Per-run configuration](/en/techniques/per-run-configuration).

@@ -109,7 +109,7 @@ await app.use({
 ```
 
 ```ts
-await app.run({ input, data: { approvedByHuman: req.body.confirmed === true } });
+await app.run({ prompt, data: { approvedByHuman: req.body.confirmed === true } });
 ```
 
 Returning `isError` rather than throwing lets the agent explain and ask, instead
@@ -238,7 +238,7 @@ budget is the control.
 ## Secrets and data the model must not see
 
 ```ts
-memory: { apiKey: "sk-…" };   // ✗ the model reads it, the report records it
+state: { memory: ["apiKey: sk-…"] };   // ✗ the model reads it, the report records it
 data: { apiKey: "sk-…" };     // ✓ transported, never sent, never recorded
 ```
 

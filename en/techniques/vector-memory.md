@@ -181,7 +181,7 @@ changed, cache it, or recall once before the loop rather than inside it.
 ## When not to use it
 
 If everything fits in the prompt, put it in the prompt. A 20-line runbook belongs
-in the agent's `.md`, or in `run({ memory })` — both are simpler, deterministic,
+in the agent's `.md`, or in `run({ state })` — both are simpler, deterministic,
 and cost nothing to retrieve.
 
 Vector memory earns its complexity when the corpus is large enough that choosing

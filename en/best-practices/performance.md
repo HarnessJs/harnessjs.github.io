@@ -124,7 +124,7 @@ execution tree, emitting events and requesting streaming. It is worth roughly
 **2× in CPU time per run**.
 
 ```ts
-await app.run({ input, log: false, report: debug ? { … } : false });
+await app.run({ prompt, log: false, report: debug ? { … } : false });
 ```
 
 Also, `report: true` in a busy service is unbounded disk growth of files nobody

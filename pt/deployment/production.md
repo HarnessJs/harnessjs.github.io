@@ -16,7 +16,7 @@ const server = express();
 server.post("/runs", async (req, res) => {
   try {
     const resposta = await app.run({
-      input: { message: req.body.message },
+      prompt: req.body.message,
       data: { requestId: req.id },
       signal: req.signal,
       budget: { maxDurationMs: 120_000, maxCostUsd: 0.5 },
@@ -71,7 +71,7 @@ const execucoes = new Map<string, RunHandle<string>>();
 
 server.post("/runs", (req, res) => {
   const exec = app.run({
-    input: req.body,
+    prompt: req.body.message,
     observe: true, // ← obrigatório: o handle é o único consumidor
     budget: { maxDurationMs: 300_000 },
   });
@@ -114,7 +114,7 @@ Mantenha o serviço quieto e suba o volume de uma execução quando precisar:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: req.header("x-debug") ? "verbose" : false,
   report: req.header("x-debug") ? { dir: `report/${req.id}` } : false,
 });

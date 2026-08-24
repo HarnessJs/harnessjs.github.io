@@ -56,7 +56,7 @@ class StubReviewer {
 class TestWorkflow {}
 
 test("stops as soon as it is approved", async () => {
-  await Thena.create(TestWorkflow).run({ input: { message: "go" } });
+  await Thena.create(TestWorkflow).run({ prompt: "go" });
   expect(rounds).toEqual([1, 2, 3]); // stopped on its own, not at the ceiling
 });
 ```
@@ -102,7 +102,7 @@ test. The structured data is stable:
 
 ```ts
 const events: ExecutionEvent[] = [];
-await app.run({ input, log: (e) => events.push(e) });
+await app.run({ prompt, log: (e) => events.push(e) });
 
 const toolCalls = events.filter((e) => e.kind === "tool" && e.phase === "end");
 expect(toolCalls).toHaveLength(2);

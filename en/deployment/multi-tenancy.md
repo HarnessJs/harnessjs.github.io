@@ -63,12 +63,12 @@ The generic is what makes `tenantId` arrive as a `string`. Without it, `data` is
 const app = Thena.create<string, AccountData>(AssistantWorkflow, config);
 
 const acme = await app.run({
-  input: { message: "…" },
+  prompt: "…",
   data: { tenantId: "acme" },
 });
 
 const globex = await app.run({
-  input: { message: "…" },
+  prompt: "…",
   data: { tenantId: "globex" },
 });
 ```
@@ -100,7 +100,7 @@ inside a tool, the function form anywhere else in the run.
 
 ```ts
 data: { tenantId: "acme" }; // never reaches the model, never in the report
-memory: { plan: "pro" }; // serialised into `system` — the model reads it
+state: { memory: ["plan: pro"] }; // serialised into `system` — the model reads it
 ```
 
 A tenant id in `memory` would go into the prompt and into the report on disk.
@@ -138,7 +138,7 @@ Budgets are per run, so they are per tenant for free:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   data: { tenantId },
   budget: {
     maxCostUsd: account.remainingCredit,
@@ -188,7 +188,7 @@ Per-run overrides keep one tenant's prompts out of another's folder:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   data: { tenantId },
   report: { dir: `report/${tenantId}` },
 });

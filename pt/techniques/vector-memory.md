@@ -184,7 +184,7 @@ vez de dentro dele.
 ## Quando não usar
 
 Se tudo cabe no prompt, ponha no prompt. Um runbook de 20 linhas pertence ao
-`.md` do agente, ou ao `run({ memory })` — os dois são mais simples,
+`.md` do agente, ou ao `run({ state })` — os dois são mais simples,
 determinísticos, e custam zero para recuperar.
 
 A memória vetorial se justifica quando o corpus é grande o bastante para que

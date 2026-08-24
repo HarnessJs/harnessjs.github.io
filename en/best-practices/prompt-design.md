@@ -93,7 +93,7 @@ trim, because they are in the `system` message.
 [`run({ data })`](/en/fundamentals/state-and-context#memory-vs-data).
 
 **Per-run facts.** A user's name, a plan, an account — those go in
-`run({ memory })`, which becomes a `system` message. The `.md` is the same for
+`run({ state })`, which becomes a `system` message. The `.md` is the same for
 every run.
 
 **Tool descriptions.** Describe the tool in its `@Tool({ description })`. Saying

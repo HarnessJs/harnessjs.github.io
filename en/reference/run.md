@@ -2,7 +2,7 @@
 
 ```ts
 const app = Thena.create(MyWorkflow, config); // not async
-const exec = app.run({ input: { message: "hi" } });
+const exec = app.run({ prompt: "hi" });
 const result = await exec;
 await app.dispose();
 ```
@@ -37,8 +37,8 @@ Concurrent `run` calls are safe: each opens its own `RunContext`.
 
 ```ts
 await app.run({
-  input: { message: "Review src/" },
-  memory: { userId: "123" },
+  prompt: "Review src/",
+  state: { memory: ["userId: 123"] },
   data: { accountId: "acme" },
   budget: { maxChatCalls: 20 },
   signal: AbortSignal.timeout(30_000),
@@ -50,8 +50,8 @@ await app.run({
 
 | Option | Type | Notes |
 | --- | --- | --- |
-| `input` | `WorkflowInput` | `message` becomes the initial input; otherwise the whole object is serialised |
-| `memory` | `Record<string, unknown>` | seeded into state's `memory` — **the model reads it** |
+| `prompt` | `string` | the first `user` message of the run. Not the agent's `prompt`, which is its system markdown |
+| `state` | `Partial<State>` | where the run starts: `history`, `tasks`, `memory`. `handle.state` gives you the one to pass next |
 | `data` | `D` | your channel — **never goes to the model or the report** |
 | `budget` | `RunBudget` | without it, nothing is measured |
 | `signal` | `AbortSignal` | combines with the handle's `abort()`; first to fire wins |

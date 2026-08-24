@@ -184,7 +184,7 @@ streaming ao provider — é o caminho de custo zero, e vale cerca de 2× em tem
 CPU por execução. Ligue a observação explicitamente:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 Ou ligue `report`, `log`, ou um plugin com `onEvent` — qualquer um deles liga a

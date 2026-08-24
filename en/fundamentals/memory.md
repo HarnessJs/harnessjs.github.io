@@ -5,7 +5,7 @@ for this run, and **long-term memory** that outlives it.
 
 | | Lives | The model reads |
 | --- | --- | --- |
-| **Working** — `run({ memory })` | in the run's state, as a `system` message | every turn, all of it |
+| **Working** — `run({ state })` | in the run's state, as a `system` message | every turn, all of it |
 | **Long-term** — `VectorMemory`, via `@memory()` | in a vector database | only what you `recall` and put in the prompt |
 
 Neither is automatic in the sense that matters: nothing is retrieved and injected
@@ -21,8 +21,8 @@ the first turn:
 
 ```ts
 await app.run({
-  input: { message: "What should I do next?" },
-  memory: { userId: "123", plan: "pro" },
+  prompt: "What should I do next?",
+  state: { memory: ["userId: 123", "plan: pro"] },
 });
 ```
 
@@ -37,8 +37,8 @@ should **not** see belongs in [`run({ data })`](/en/fundamentals/state-and-conte
 instead.
 
 Run memory is not persistent. It lasts as long as the run. Persisting it across
-runs is your application's job — load it, pass it to `run({ memory })`, save
-whatever changed.
+runs is your application's job — load it, pass it in `run({ state })`, save
+whatever changed. `handle.state` gives you back the state the run ended with.
 
 ## Vector memory
 

@@ -46,7 +46,7 @@ tool.
 | `maxTurns` | quantas mensagens do fim manter |
 | `maxChars` | teto de caracteres do histórico; corta do começo até caber |
 | `maxCharsPerTool` | teto por observação de tool |
-| `warnIndexFailure` | a nota deixada no lugar do que foi cortado; `false` corta em silêncio |
+| `notice` | a nota deixada no lugar do que foi cortado; `false` corta em silêncio |
 
 ::: tip `maxTurns` conta mensagens, não idas e voltas
 Um turno com tool ocupa duas mensagens (`assistant` + `tool`), então
@@ -76,20 +76,32 @@ cache de prompt do provider. Cortar do topo invalidaria o desconto a cada turno.
 ```ts
 contextWindow({
   maxTurns: 12,
-  warnIndexFailure: "[…histórico anterior omitido para caber na janela…]",
+  notice: "[…previous history omitted to fit the window…]",
 });
 ```
 
 Uma nota explícita é melhor que um salto silencioso. Sem ela o modelo vê a
 conversa começar no meio e pode repetir trabalho que já fez.
 
+O texto padrão é **em inglês**, como tudo que o framework envia ao modelo desde
+a `0.12.0` — o idioma do seu agente é decisão do seu prompt, não de um literal
+do framework. Se o resto do seu contexto está em português, passe a sua:
+
+```ts
+contextWindow({ maxTurns: 12, notice: "[…histórico anterior omitido…]" });
+```
+
 `false` corta sem avisar. Use só quando você tiver medido que a própria nota está
 confundindo o modelo.
 
-::: warning Sobre o nome dessa opção
-O `warnIndexFailure` guarda o texto da nota, o que o nome dele não sugere — parece
-uma renomeação mal feita. É API pública, então este é o nome real; espere que
-mude numa versão futura.
+::: tip Antes se chamava `warnIndexFailure`
+Renomeada para `notice` na **0.12.0**. O nome antigo guardava o texto da nota sem
+que nada nele sugerisse isso — veio de uma renomeação automatizada que atravessou
+arquivos, e `warnIndexFailure` é, de verdade, o tratador de falha ao gravar o
+índice do report, em outro canto do código.
+
+`warnIndexFailure` continua funcionando, marcado `@deprecated`, então nada quebra
+ao atualizar. Quando os dois vierem, `notice` vence.
 :::
 
 ## Cortando na origem

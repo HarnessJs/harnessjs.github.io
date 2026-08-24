@@ -110,7 +110,7 @@ await app.use({
 ```
 
 ```ts
-await app.run({ input, data: { aprovadoPorHumano: req.body.confirmado === true } });
+await app.run({ prompt, data: { aprovadoPorHumano: req.body.confirmado === true } });
 ```
 
 Devolver `isError` em vez de lançar deixa o agente explicar e perguntar, em vez
@@ -242,7 +242,7 @@ orçamento é o controle.
 ## Segredos e dados que o modelo não deve ver
 
 ```ts
-memory: { apiKey: "sk-…" };   // ✗ o modelo lê, o report grava
+state: { memory: ["apiKey: sk-…"] };   // ✗ o modelo lê, o report grava
 data: { apiKey: "sk-…" };     // ✓ transportado, nunca enviado, nunca gravado
 ```
 

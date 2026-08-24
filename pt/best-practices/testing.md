@@ -56,7 +56,7 @@ class StubRevisor {
 class TesteWorkflow {}
 
 test("para assim que é aprovado", async () => {
-  await Thena.create(TesteWorkflow).run({ input: { message: "vai" } });
+  await Thena.create(TesteWorkflow).run({ prompt: "vai" });
   expect(rodadas).toEqual([1, 2, 3]); // parou sozinho, não no teto
 });
 ```
@@ -103,7 +103,7 @@ instável. Os dados estruturados são estáveis:
 
 ```ts
 const eventos: ExecutionEvent[] = [];
-await app.run({ input, log: (e) => eventos.push(e) });
+await app.run({ prompt, log: (e) => eventos.push(e) });
 
 const tools = eventos.filter((e) => e.kind === "tool" && e.phase === "end");
 expect(tools).toHaveLength(2);

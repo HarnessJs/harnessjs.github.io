@@ -21,8 +21,9 @@ alternam entre duas palavras para a mesma coisa.
 | Termo | O que significa | Inglês |
 | --- | --- | --- |
 | **Contexto** (`ctx`) | O objeto que atravessa todos os passos de uma execução. Carrega `state`, `output`, `turn`, `data`, `signal` e os controles da execução. | Context |
+| **Prompt** | Duas coisas diferentes, e a documentação sempre diz qual. O **prompt do agente** é o `@Agent({ prompt })`, um arquivo markdown, fixo por classe, enviado como mensagem `system`. O **prompt da execução** é o `run({ prompt })`, uma string, um por execução, enviado como a primeira mensagem `user`. | Prompt |
 | **Estado** | A classe declarada em `@Workflow({ state })`, instanciada uma vez por execução e injetada com `@state()`. | State |
-| **Memória** | A memória de trabalho do agente: o `run({ memory })`, lido pelo modelo em todo turno desta execução, e que acaba com ela. | Memory |
+| **Memória** | A memória de trabalho do agente: o `run({ state })`, lido pelo modelo em todo turno desta execução, e que acaba com ela. | Memory |
 | **Memória vetorial** | Memória de longo prazo: a `VectorMemory`, injetada pelo `@memory()`, buscada por similaridade e que sobrevive à execução. Os bancos por trás dela são o `ThenaConfig.stores`. | Vector memory |
 | **Data** | O `run({ data })`. O canal de dados da execução. Nunca vai para o modelo, nunca chega ao report. | Data |
 | **Orçamento** | O teto da execução inteira — tempo, chamadas, tokens, custo. | Budget |
@@ -56,8 +57,10 @@ alternam entre duas palavras para a mesma coisa.
 ## Palavras que deliberadamente não usamos
 
 - **"Chain"** / "cadeia" — o framework tem workflows e passos. Não tem chains.
-- **"Prompt engineering"** — o prompt é um arquivo markdown que você edita. A
-  gente diz escrever um prompt.
+- **"Prompt engineering"** — o prompt do agente é um arquivo markdown que você
+  edita. A gente diz escrever um prompt.
+- **"Prompt"** sem dizer qual — veja a entrada acima. No corpo do texto, diga
+  *o prompt do agente* ou *o prompt da execução*.
 - **"LLM"** no corpo do texto — a gente diz **modelo**. `LLM` só aparece onde nomeia
   a categoria, como em "um framework para agentes de LLM".
 - **"Sessão"** — execução é execução. O que persiste entre execuções é memória.

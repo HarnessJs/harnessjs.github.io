@@ -113,7 +113,7 @@ export class DeployTool {
 
   async execute(@input() { repo }: { repo: string }) {
     return this.runtime.run(DeployWorkflow, {
-      input: { message: `Deploy ${repo}` },
+      prompt: `Deploy ${repo}`,
     });
   }
 }
@@ -133,7 +133,7 @@ plus tools. Nested inside a `parallel` of three, 30.
 Multi-agent is where a run-level `budget` stops being optional:
 
 ```ts
-await app.run({ input, budget: { maxChatCalls: 30, maxCostUsd: 0.5 } });
+await app.run({ prompt, budget: { maxChatCalls: 30, maxCostUsd: 0.5 } });
 ```
 
 ## Building it up

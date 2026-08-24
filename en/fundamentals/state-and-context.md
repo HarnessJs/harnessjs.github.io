@@ -28,12 +28,12 @@ ctx.state.append("memory", "The user is called Castro");
 ctx.state.set("history", ctx.state.history.slice(0, -1)); // drop the last turn
 ```
 
-The initial `memory` is seeded at `run`:
+The state a run starts from is seeded at `run`:
 
 ```ts
 await app.run({
-  input: { message: "Hello" },
-  memory: { userId: "123", plan: "pro" }, // becomes durable context
+  prompt: "Hello",
+  state: { memory: ["userId: 123", "plan: pro"] }, // becomes durable context
 });
 ```
 
@@ -77,8 +77,8 @@ model.
 
 ```ts
 await app.run({
-  input: { message: "What's my plan?" },
-  memory: { plan: "pro" }, // serialised into `system` — the model reads it
+  prompt: "What's my plan?",
+  state: { memory: ["plan: pro"] }, // serialised into `system` — the model reads it
   data: { accountId: "acme" }, // never serialised, never in the report
 });
 ```
@@ -93,7 +93,7 @@ correlation id.
 type MyRun = { accountId: string; region: string };
 
 const app = Thena.create<string, MyRun>(Flow, config);
-await app.run({ input, data: { accountId: "acme", region: "sa-east-1" } });
+await app.run({ prompt, data: { accountId: "acme", region: "sa-east-1" } });
 
 context<MyRun>().data.accountId; // string, no cast
 ```

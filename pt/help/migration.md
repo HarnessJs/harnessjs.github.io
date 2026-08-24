@@ -1,5 +1,51 @@
 # Migração
 
+## Da 0.11 para a 0.12
+
+### O `run({ input: { message } })` virou `run({ prompt })`
+
+```ts
+- await app.run({ input: { message: "Revise src/" } });
++ await app.run({ prompt: "Revise src/" });
+```
+
+O embrulho nunca pagou o próprio custo. O `input` era declarado como um saco
+aberto, mas nada no framework entregava aquele objeto ao seu código — o
+`@input()` é outra coisa, os argumentos validados pelo schema de uma **tool**. O
+único consumidor o reduzia a uma string antes de a execução começar. Sobrava um
+nível de aninhamento e um nome que sugeria o par input/output de IO, num método
+que por definição só recebe entrada.
+
+A migração é mecânica: tire o embrulho. Vale também para runs aninhadas pelo
+`WorkflowRuntime`.
+
+### Um `input` sem `message` não é mais serializado
+
+Passar `{ input: { userId: 7 } }` serializava o objeto inteiro em JSON e fazia
+disso o prompt. Era a única razão de o tipo ser aberto, e transformava um campo
+com o nome errado em sucesso silencioso em vez de erro.
+
+```ts
+- await app.run({ input: { userId: 7, acao: "revisar" } });
++ await app.run({ prompt: JSON.stringify({ userId: 7, acao: "revisar" }) });
+```
+
+Em geral o melhor é não serializar nada. Payload estruturado tem duas portas, e
+a escolha entre elas é o que o modelo pode ver: o
+[`data`](/pt/get-started/configuration#state-memory-e-data) para o que ele
+**não** deve ler, o `state.memory` para o que ele deve.
+
+### O `WorkflowInput` saiu do pacote
+
+O tipo não é mais exportado. O `WorkflowRunOptions` continua, com `prompt` no
+lugar do `input`.
+
+### Duas coisas se chamam `prompt` agora
+
+O `@Agent({ prompt })` é o prompt de sistema do agente, em markdown, fixo por
+classe. O `run({ prompt })` é a fala do usuário, um por execução. A documentação
+sempre diz qual — veja o [glossário](/pt/help/glossary).
+
 ## Da 0.10 para a 0.11
 
 ### O `@thenajs/tools` voltou, sem a tool de shell
@@ -30,8 +76,8 @@ tarballs. A `0.11` corrige. Nada a fazer — só importa se algum scanner de lic
 apontou o pacote.
 
 
-O ThenaJS está na **0.9.x**. Em `0.x`, o caret não sobe a versão menor — um
-`^0.6.0` no seu `package.json` não puxa a 0.9 sozinho. Estas notas valem para quem
+O ThenaJS está na **0.12.x**. Em `0.x`, o caret não sobe a versão menor — um
+`^0.11.0` no seu `package.json` não puxa a 0.12 sozinho. Estas notas valem para quem
 instala novo, ou sobe de versão de propósito.
 
 ## Da 0.6 para a 0.9
@@ -45,7 +91,7 @@ Antes, uma execução que falhava sumia em silêncio. Agora a rejeição chega a
 ```ts
 // trate
 try {
-  await app.run({ input });
+  await app.run({ prompt });
 } catch (err) {
   // o erro é seu agora
 }
@@ -60,9 +106,9 @@ O `await` continua funcionando exatamente como antes. O que quebrou foi tratar o
 retorno como `Promise` de verdade, além de `then`/`catch`/`finally`:
 
 ```ts
-await app.run({ input }); // ok
-app.run({ input }).catch(trata); // ok
-Promise.all([app.run({ input })]); // use .result
+await app.run({ prompt }); // ok
+app.run({ prompt }).catch(trata); // ok
+Promise.all([app.run({ prompt })]); // use .result
 ```
 
 O handle existe porque uma `Promise` não expressa três necessidades reais:
@@ -70,7 +116,7 @@ cancelar, observar enquanto acontece, e **guardar** a execução para reencontr�
 depois.
 
 ```ts
-const exec = app.run({ input });
+const exec = app.run({ prompt });
 exec.runId; // disponível de forma síncrona
 exec.abort(); // cancela
 exec.result; // uma Promise comum, se você precisar de uma
@@ -103,7 +149,7 @@ A observação liga sozinha quando há `report`, `log`, ou um plugin com `onEven
 você não usa nenhum dos três:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 Você recebe um aviso único no console ao assinar uma execução que não está sendo

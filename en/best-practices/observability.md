@@ -71,7 +71,7 @@ in production.
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: req.header("x-debug") ? "verbose" : false,
   report: req.header("x-debug") ? { dir: `report/${req.id}` } : false,
 });
@@ -101,7 +101,7 @@ It is a no-op when nothing is observing, so call it freely.
 `runId` is available synchronously, before the first turn:
 
 ```ts
-const exec = app.run({ input, data: { requestId: req.id } });
+const exec = app.run({ prompt, data: { requestId: req.id } });
 req.log.info({ runId: exec.runId }, "agent run started");
 ```
 

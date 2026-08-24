@@ -4,8 +4,8 @@
 ask for the result; without it, you ask for the run.**
 
 ```ts
-const text = await app.run({ input }); // the result
-const exec = app.run({ input }); // the run
+const text = await app.run({ prompt }); // the result
+const exec = app.run({ prompt }); // the run
 ```
 
 It is *thenable*, so both work without `run` splitting into two methods.
@@ -17,7 +17,7 @@ happening, and **holding** the run to find it again later — the pattern of
 answering a POST with a `runId` and following by SSE.
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 
 exec.runId; // available synchronously, before the first turn
 exec.result; // a plain Promise — composes with Promise.all
@@ -78,7 +78,7 @@ Observation turns on by itself when there is a `report`, a `log`, or a plugin
 with `onEvent`. When the only consumer is the handle, say so:
 
 ```ts
-const exec = app.run({ input, observe: true });
+const exec = app.run({ prompt, observe: true });
 ```
 
 You get the warning once, rather than a `for await` that never yields.
@@ -89,7 +89,11 @@ The reason the handle exists:
 
 ```ts
 app.post("/runs", (req, res) => {
-  const exec = agent.run({ input: req.body, observe: true, signal: req.signal });
+  const exec = agent.run({
+    prompt: req.body.message,
+    observe: true,
+    signal: req.signal,
+  });
   res.json({ runId: exec.runId }); // answered before the first turn
   runs.set(exec.runId, exec);
 });

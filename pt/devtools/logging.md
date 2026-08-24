@@ -88,7 +88,7 @@ depura uma requisição em produção sem deixar o serviço inteiro barulhento:
 
 ```ts
 await app.run({
-  input,
+  prompt,
   log: req.header("x-debug") ? "verbose" : false,
 });
 ```

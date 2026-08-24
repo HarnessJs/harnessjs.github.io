@@ -116,7 +116,7 @@ export class DeployTool {
 
   async execute(@input() { repo }: { repo: string }) {
     return this.runtime.run(DeployWorkflow, {
-      input: { message: `Faça o deploy de ${repo}` },
+      prompt: `Faça o deploy de ${repo}`,
     });
   }
 }
@@ -137,7 +137,7 @@ ao modelo, mais as tools. Aninhado dentro de um `parallel` de três, 30.
 Multiagente é onde um `budget` de execução deixa de ser opcional:
 
 ```ts
-await app.run({ input, budget: { maxChatCalls: 30, maxCostUsd: 0.5 } });
+await app.run({ prompt, budget: { maxChatCalls: 30, maxCostUsd: 0.5 } });
 ```
 
 ## Construindo aos poucos

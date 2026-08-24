@@ -33,15 +33,15 @@ export class DeployTool {
 
   async execute(@input() { repositorio }: { repositorio: string }) {
     return this.runtime.run(DeployWorkflow, {
-      input: { message: `Faça o deploy de ${repositorio}` },
-      memory: { ambiente: "staging" }, // contexto explícito para o filho
+      prompt: `Faça o deploy de ${repositorio}`,
+      state: { memory: ["ambiente: staging"] }, // contexto explícito para o filho
     });
   }
 }
 ```
 
-O filho começa com estado novo: só recebe o que você passou em `input` e
-`memory`.
+O filho começa com estado novo: só recebe o que você passou em `prompt` e
+`state`.
 
 Isso é bom — o ruído dele não polui o pai — e tem um custo: ele começa sem saber
 o que foi pedido. Para repassar algo da conversa do pai, peça o contexto:
@@ -54,8 +54,8 @@ async execute(
   const pedido = ctx.state.history.find((m) => m.role === "user")?.content;
 
   return this.runtime.run(DeployWorkflow, {
-    input: { message: `Faça o deploy de ${repositorio}` },
-    memory: { pedidoOriginal: pedido },
+    prompt: `Faça o deploy de ${repositorio}`,
+    state: { memory: [`pedidoOriginal: ${pedido}`] },
   });
 }
 ```
@@ -105,7 +105,7 @@ encadeado, e corta quem estourar primeiro:
 
 ```ts
 return this.runtime.run(DeployWorkflow, {
-  input: { message: `Faça o deploy de ${repositorio}` },
+  prompt: `Faça o deploy de ${repositorio}`,
   budget: { maxChatCalls: 5 }, // teto próprio, ainda dentro do do pai
 });
 ```
@@ -127,7 +127,7 @@ Ele não tem estado — tudo que a execução precisa vem do `RunContext` — e 
 uma `Promise` comum, não um `RunHandle`. Uma execução aninhada não é cancelável
 separadamente: ela é cancelada junto com o pai, pelo signal compartilhado.
 
-Só `input`, `memory` e `budget` são repassados.
+Só `prompt`, `state` e `budget` são repassados.
 
 ## Quando não usar
 
